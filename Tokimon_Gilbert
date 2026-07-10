@@ -51,6 +51,7 @@ trip = ["Hello everyone! Welcome to Zapsols Airlines!",
         "(Plane crashes nose first into the ground. The landing gear broke. The rear also broke.)"]
 lab = ["Player: Where's Broke?", "Lem: Oh Broke isn't here. He's in the OTHER lab.", "Player: Uh... who are you?", "Lem: I'm Lem, and I have a de-lem-a", "Player: Uh... Okay...", "Lem: Someone sent out the baby Tokimon out!", "Objective: Find the baby Tokimon and return it to the lab!", "Player: Uh... okay...", "Lem: Hurry up! The baby Tokimon is in danger!", "Player: Okay YEESH, I'll go find it!"]
 starter_speech = ["I think you should choose a Tokimon to start with!", "You can choose between 1: Sickorita", "2: Dynaquill", "3: Botodile!", "Nice choice!"]
+route_1_time = ["You know there's a place called \"Route 1\". Very good place to start I heard...", "How about you go out there?", "I assure you it is great, now can you like get there?", "Player: I'm sure it's better than the forest Broke once yeeted me to.", "Ha, Broke would NEVER do such a thing.", "Player: He already has."]
 ###------Images------###
 broke = pygame.image.load("RPGs/Airplane.png").convert_alpha()
 broke = pygame.transform.scale(broke, (200, 200))
@@ -356,7 +357,7 @@ def Tokidex():
     elif Tokimon == "Crusinaw":
         dialogue(["No. 11: It's back now looks like a relaxing cruise making tired, smaller Tokimon just hop on and get eaten."])    
     elif Tokimon == "Seakigater":
-        dialogue(["It now has the speed of a speedboat. It now is able to catch the Tokimon directly if needed."])    
+        dialogue(["It now has the speed of a speedboat. It now is able to catch the Tokimon directly if needed."])     
     if Tokimon not in tokidex and Tokimon != "":
         tokidex.append(Tokimon)
 def dialogue(conversation):
@@ -541,6 +542,7 @@ while on:
         tokidex.append(starter)    
         Tokimon = starter
         make_team(starter)  
+        dialogue(route_1_time)
     if mode == "Battle":
         activer = team[team_slot]["Tokimon"]
         game.blit(player, (590, 330))
