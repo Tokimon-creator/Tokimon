@@ -53,23 +53,23 @@ lab = ["Player: Where's Broke?", "Lem: Oh Broke isn't here. He's in the OTHER la
 starter_speech = ["I think you should choose a Tokimon to start with!", "You can choose between 1: Sickorita", "2: Dynaquill", "3: Botodile!", "Nice choice!"]
 route_1_time = ["You know there's a place called \"Route 1\". Very good place to start I heard...", "How about you go out there?", "I assure you it is great, now can you like get there?", "Player: I'm sure it's better than the forest Broke once yeeted me to.", "Ha, Broke would NEVER do such a thing.", "Player: He already has."]
 ###------Images------###
-broke = pygame.image.load("RPGs/Airplane.png").convert_alpha()
+broke = pygame.image.load("Airplane.png").convert_alpha()
 broke = pygame.transform.scale(broke, (200, 200))
 angle = 0
 x = 700
 y = 100
-player = pygame.image.load("RPGs/player.png").convert_alpha()
+player = pygame.image.load("player.png").convert_alpha()
 player = pygame.transform.scale(player, (128, 128))
 player_x = 550
 player_y = 420
 degree = 0
-tichu = pygame.image.load("RPGs/Tichu.png").convert_alpha()
+tichu = pygame.image.load("Tichu.png").convert_alpha()
 tichu = pygame.transform.scale(tichu, (128, 128))
-sickorita = pygame.image.load("RPGs/Sickorita.png").convert_alpha()
+sickorita = pygame.image.load("Sickorita.png").convert_alpha()
 sickorita = pygame.transform.scale(sickorita, (128, 128))
-dynaquill = pygame.image.load("RPGs/Dynaquill.png").convert_alpha()
+dynaquill = pygame.image.load("Dynaquill.png").convert_alpha()
 dynaquill = pygame.transform.scale(dynaquill, (128, 128))
-botodile = pygame.image.load("RPGs/Botodile.png").convert_alpha()
+botodile = pygame.image.load("Botodile.png").convert_alpha()
 botodile = pygame.transform.scale(botodile, (128, 128))
 pygame.display.set_caption("Tokimon: Bold")
 ###------Dicts------###
@@ -429,6 +429,8 @@ def draw_outside():
     outside = True
     if found == False:
         game.blit(tichu, (600, 300))
+    else:
+        pygame.draw.rect(game, (160, 82, 45), (590, 0, 200, 720))  # dirt path    
 ###------Game Loop------###    
     
 while on:
