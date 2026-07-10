@@ -541,7 +541,6 @@ while on:
         tokidex.append(starter)    
         Tokimon = starter
         make_team(starter)  
-        Tokimon_battle("Tichu", "") 
     if mode == "Battle":
         activer = team[team_slot]["Tokimon"]
         game.blit(player, (590, 330))
