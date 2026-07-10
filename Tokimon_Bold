@@ -421,12 +421,14 @@ def draw_lab():
 def draw_outside():
     global outside, Tokimon, inside_lab
     inside_lab = False
-    Tokimon = "Tichu"
+    if found == False:
+        Tokimon = "Tichu"
     game.fill((20, 220, 140))  # grass 
     if mode != "Battle":
         game.blit(player, (player_x, player_y))
     outside = True
-    game.blit(tichu, (600, 300))
+    if found == False:
+        game.blit(tichu, (600, 300))
 ###------Game Loop------###    
     
 while on:
@@ -521,7 +523,7 @@ while on:
         else:
             game.blit(broke, (700, 100))
     me = pygame.Rect((player_x, player_y, 128, 128))
-    if me.colliderect(door) and found == False and inside_lab == True:
+    if me.colliderect(door) and inside_lab == True:
         draw_outside()
     if me.colliderect(peekaboo) and outside == True and found == False:
         game.fill((20, 220, 140))  # grass
