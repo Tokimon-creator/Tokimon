@@ -28,6 +28,7 @@ outside = False
 found = False
 inside_lab = False
 starter_picked = False
+inside_route = False
 ###------Dialogue------###
 intro = ["Tokimon in the ocean, surfers in the seas...",
 "Tokimon on the ground, unfortunate trainers on the floor...",
@@ -71,13 +72,16 @@ dynaquill = pygame.image.load("Dynaquill.png").convert_alpha()
 dynaquill = pygame.transform.scale(dynaquill, (128, 128))
 botodile = pygame.image.load("Botodile.png").convert_alpha()
 botodile = pygame.transform.scale(botodile, (128, 128))
+bootboot = pygame.image.load("Boot Boot.png").convert_alpha()
+bootboot = pygame.transform.scale(bootboot, (128, 128))
 pygame.display.set_caption("Tokimon: Bold")
 ###------Dicts------###
-images = {"Tichu": tichu, "Botodile": botodile, "Sickorita": sickorita, "Dynaquill": dynaquill}
+images = {"Tichu": tichu, "Botodile": botodile, "Sickorita": sickorita, "Dynaquill": dynaquill, "Boot Boot": bootboot}
 base_stats = {"Tichu": {"HP": 30, "Attack": 15, "Special Attack": 50, "Defense": 30, "Special Defense": 30, "Speed": 80, "Weight": 5, "Wild level": 1, "Type": "Electric", "Type2": "Placeholder","movepool": {"Level 1": ["Charm", "Shock"], "Level 7": ["Peek-a-boo"]}},
               "Sickorita": {"HP": 120, "Attack": 35, "Special Attack": 25, "Defense": 70, "Special Defense": 80, "Speed": 40, "Weight": 25, "Wild level": 5, "Type": "Grass", "Type2": "Fairy", "movepool": {"Level 1": ["Parting Stomp", "Leaf Attack"]},}, 
               "Dynaquill": {"HP": 50, "Attack": 15, "Special Attack": 180, "Defense": 30, "Special Defense": 30, "Speed": 20, "Weight": 5, "Wild level": 5, "Type": "Fire", "Type2": "Placeholder", "movepool": {"Level 1": ["Flare", "Ember"]}},
-              "Botodile": {"HP": 15, "Attack": 80, "Special Attack": 50, "Defense": 30, "Special Defense": 30, "Speed": 120, "Weight": 10, "Wild level": 5, "Type": "Water", "Type2": "Dark", "movepool": {"Level 1": ["Water Leap", "Water Pistol"]}}}
+              "Botodile": {"HP": 15, "Attack": 80, "Special Attack": 50, "Defense": 30, "Special Defense": 30, "Speed": 120, "Weight": 10, "Wild level": 5, "Type": "Water", "Type2": "Dark", "movepool": {"Level 1": ["Water Leap", "Water Pistol"]}},
+              "Boot Boot": {"HP": 5, "Attack": 108, "Special Attack": 20, "Defense": 67, "Special Defense": 41, "Speed": 7, "Weight": 11, "Wild level": 10, "Type": "Flying", "Type2": "Ghost", "movepool": {"Level 1": ["Boot Out", "Tackle", "Take Down"]}}}
 move_dict = {"Charm": {"Power": 0, "Effect": "Lowers attack", "Type": "Fairy", "PP": 15, "Attack": "Status", "Categories": [], "Priority": 0},
             "Shock": {"Power": 30, "Effect": "Chance of paralyzation", "Type": "Electric", "PP": 15, "Attack": "Special", "Categories": [], "Priority": 0},
             "Peek-a-boo": {"Power": 50, "Effect": "Invulnerble on the charging turn", "Type": "Dark", "PP": 15, "Attack": "Physical", "Categories": ["Charging"], "Priority": +2},
@@ -86,7 +90,10 @@ move_dict = {"Charm": {"Power": 0, "Effect": "Lowers attack", "Type": "Fairy", "
             "Flare": {"Power": 0, "Effect": "Lowers Defense", "Type": "Fire", "PP": 15, "Attack": "Status", "Categories": [], "Priority": 0},
             "Ember": {"Power": 40, "Effect": "", "Type": "Fire", "PP": 15, "Attack": "Special", "Categories": [], "Priority": 0},
             "Water Leap": {"Power": 0, "Effect": "Lowers Defense", "Type": "Water", "PP": 15, "Attack": "Status", "Categories": [], "Priority": +4},
-            "Water Pistol": {"Power": 40, "Effect": "", "Type": "Water", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": +2}}
+            "Water Pistol": {"Power": 40, "Effect": "", "Type": "Water", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": +2},
+            "Boot Out": {"Power": 20, "Effect": "Forces the opponent to switch out.", "Type": "Ghost", "PP": 5, "Attack": "Physical", "Categories": ["Kicking"], "Priority": +4},
+            "Tackle": {"Power": 40, "Effect": "", "Type": "Normal", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": 0},
+            "Take Down": {"Power": 90, "Effect": "Recoil", "Type": "Flying", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": +2}}
 stage_multiplier = {
     -6: 0.25,
     -5: 0.29,
@@ -104,12 +111,15 @@ stage_multiplier = {
 }
 matchup = {
     "Electric": {"Weaknesses": ["Dark"], "Resistences": ["Fire"]},
-    "Fire": {"Weaknesses": ["Water"], "Resistences": ["Fairy", "Grass"]},
-    "Water": {"Weaknesses": ["Electric", "Grass"], "Resistences": ["Fire"]},
-    "Grass": {"Weaknesses": ["Fire"], "Resistences": ["Electric", "Fairy"]},
-    "Fairy": {"Weaknesses": ["Fire"], "Resistences": ["Dark", "Dragon"]},
+    "Fire": {"Weaknesses": ["Water", "Flying"], "Resistences": ["Fairy", "Grass"]},
+    "Water": {"Weaknesses": ["Electric", "Grass", "Flying"], "Resistences": ["Fire"]},
+    "Grass": {"Weaknesses": ["Fire", "Flying"], "Resistences": ["Electric", "Fairy"]},
+    "Fairy": {"Weaknesses": ["Fire", "Flying"], "Resistences": ["Dark", "Dragon"]},
     "Dark": {"Weaknesses": ["Fire", "Fairy"], "Resistences": ["Electric"]},
     "Dragon": {"Weaknesses": ["Fairy"], "Resistences": ["Fire", "Grass", "Water"]},
+    "Ghost": {"Weaknesses": ["Fire", "Fairy", "Water", "Ghost"], "Resistences": ["Dark", "Dragon"]},
+    "Flying": {"Weaknesses": ["Water", "Dragon", "Electric"], "Resistences": ["Dark", "Fairy", "Grass", "Fire"]},
+    "Normal": {"Weaknesses": ["Fighting"], "Resistences": ["Psychic"]},
     "Placeholder": {"Weaknesses": ["The Developer When He Gets Ideas"], "Resistences": ["The Obvious"]}
 }
 ###------Functions------###
@@ -195,7 +205,7 @@ def draw_move_menu():
 
         game.blit(text, (50, 520 + i * 35))    
 def use_attack(a, d, attack):
-    global mode
+    global mode, team_slot, enemy_slot
     a_name = a["Tokimon"]
     d_name = d["Tokimon"]
 
@@ -253,7 +263,15 @@ def use_attack(a, d, attack):
             d["Status"] = "Paralyzed"   
             d["Current Speed"] *= 1/2 
             thing = [f"{d_name} was paralyzed by {attack}!"]
-    fainted = faintedornot(d)
+    elif move_dict[attack]["Effect"] == "Recoil":
+        a["HP"] -= damage/3 
+        thing = [f"{a_name} took recoil!"]       
+    elif move_dict[attack]["Effect"] == "Forces the opponent to switch out.":
+        if d in team:
+            team_slot = 0
+        elif d in enemy_team:
+            enemy_slot = 0    
+    fainted = faintedornot(d) # type: ignore
     if fainted == True:
         mode = "Overworld"
         return [[f"{d_name} fainted!"], True, thing]
@@ -322,9 +340,9 @@ def Tokimon_battle(enemy, player):
     global mode, Tokimon, enemy_slot
     mode = "Battle"
     make_enemy(enemy)
-    Tokimon = enemy
     enemy_slot = 0
-    enemy = enemy_team[enemy_slot]    
+    enemy = enemy_team[enemy_slot]
+    Tokimon = enemy    
     fp = enemy_team[0]["Tokimon"]
     for stuff, letters in enumerate(enemy):
         if letters in ["A", "E", "I", "O", "U"] and stuff == 0:
@@ -358,6 +376,8 @@ def Tokidex():
         dialogue(["No. 11: It's back now looks like a relaxing cruise making tired, smaller Tokimon just hop on and get eaten."])    
     elif Tokimon == "Seakigater":
         dialogue(["It now has the speed of a speedboat. It now is able to catch the Tokimon directly if needed."])     
+    elif Tokimon == "Boot Boot":
+        dialogue(["It wears boots. Nobody knows whats in it's nest, maybe more boots? Other believe there are eggs, those are the researchers who chose Bulbasaur in their Pokemon playthrough. By the way Pokemon Winds and Waves are coming in 2027! Pre-order today. *We aren't sponsered and this is unoffical and is added only for comedic effect."])    
     if Tokimon not in tokidex and Tokimon != "":
         tokidex.append(Tokimon)
 def dialogue(conversation):
@@ -419,7 +439,7 @@ def draw_lab():
     pygame.draw.rect(game, (50, 170, 200), (450, 130, 70, 60))
     pygame.draw.rect(game, (200, 80, 80), (680, 130, 70, 60))
 def draw_outside():
-    global outside, Tokimon, inside_lab
+    global outside, Tokimon, inside_lab, inside_route
     inside_lab = False
     if found == False:
         Tokimon = "Tichu"
@@ -430,6 +450,7 @@ def draw_outside():
     if found == False:
         game.blit(tichu, (600, 300))
     else:
+        inside_route = True
         pygame.draw.rect(game, (160, 82, 45), (590, 0, 200, 720))  # dirt path    
 ###------Game Loop------###    
     
@@ -489,10 +510,22 @@ while on:
         if keys[pygame.K_UP]:
             if mode == "Overworld":
                 player_y -= 10
+                if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True:
+                    encounter = random.randint(1, 5)
+                    if encounter in [1, 2]:
+                        Tokimon_battle("Boot Boot", "I")
+                    elif encounter in [3, 4]:
+                        Tokimon_battle("Tichu", "Me") 
             else: send_out()
         elif keys[pygame.K_DOWN]:
             if mode == "Overworld":
                 player_y += 10
+                if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True:
+                    encounter = random.randint(1, 5)
+                    if encounter in [1, 2]:
+                        Tokimon_battle("Boot Boot", "I")
+                    elif encounter in [3, 4]:
+                        Tokimon_battle("Tichu", "Me") 
         elif keys[pygame.K_LEFT]:
             if mode == "Overworld":
                 player_x -= 10
@@ -537,7 +570,7 @@ while on:
         game.blit(tichu, (600, 300))
         inside_lab = True
         outside = False
-        dialogue(starter_speech)
+        dialogue(starter_speech)            
     elif(( 
     speech[line] == "3: Botodile!" or speech[line] == "Nice choice!") and 
     starter != "" and
