@@ -11,6 +11,7 @@ chosen_move = ""
 team_slot = 0
 move_slot = 0
 enemy_slot = 0
+steps = 0
 ###------Start Game------###
 ine = 0
 pygame.init()
@@ -342,9 +343,9 @@ def Tokimon_battle(enemy, player):
     make_enemy(enemy)
     enemy_slot = 0
     enemy = enemy_team[enemy_slot]
-    Tokimon = enemy    
+    Tokimon = enemy["Tokimon"]    
     fp = enemy_team[0]["Tokimon"]
-    for stuff, letters in enumerate(enemy):
+    for stuff, letters in enumerate(enemy["Tokimon"]):
         if letters in ["A", "E", "I", "O", "U"] and stuff == 0:
             grammar = "an"
         elif stuff == 0:
@@ -375,18 +376,17 @@ def Tokidex():
     elif Tokimon == "Crusinaw":
         dialogue(["No. 11: It's back now looks like a relaxing cruise making tired, smaller Tokimon just hop on and get eaten."])    
     elif Tokimon == "Seakigater":
-        dialogue(["It now has the speed of a speedboat. It now is able to catch the Tokimon directly if needed."])     
+        dialogue(["No. 12: It now has the speed of a speedboat. It now is able to catch the Tokimon directly if needed."])     
     elif Tokimon == "Boot Boot":
-        dialogue(["It wears boots. Nobody knows whats in it's nest, maybe more boots? Other believe there are eggs, those are the researchers who chose Bulbasaur in their Pokemon playthrough. By the way Pokemon Winds and Waves are coming in 2027! Pre-order today. *We aren't sponsered and this is unoffical and is added only for comedic effect."])    
-    if Tokimon not in tokidex and Tokimon != "":
+        dialogue(["No. 13: It wears boots. Nobody knows whats in it's nest, maybe more boots? Other believe there are eggs, those are the researchers who chose Bulbasaur in their Pokemon playthrough. By the way Pokemon Winds and Waves are coming in 2027! Pre-order today.", "*We aren't affiliated, sponsored or endorsed by Pokemon International or Nintendo**.", "**This lines are only added for comedic effect."])    
+    else:
+        dialogue(["No. ???: ???"])    
+    if Tokimon not in tokidex and Tokimon != "" and Tokimon != "Undiscovered":
         tokidex.append(Tokimon)
 def dialogue(conversation):
     global line, speech
     speech = conversation
     line = 0
-    
-door = pygame.Rect((560, 560, 80, 40))
-peekaboo = pygame.Rect((600, 300, 128, 128))
 
 def write(caption):
     font = pygame.font.SysFont("Courier", 24)
@@ -455,6 +455,9 @@ def draw_outside():
 ###------Game Loop------###    
     
 while on:
+    me = pygame.Rect((player_x, player_y, 128, 128))
+    door = pygame.Rect((560, 560, 80, 40))
+    peekaboo = pygame.Rect((600, 300, 128, 128))
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a: 
@@ -466,8 +469,6 @@ while on:
                 elif speech == trip:
                     line = 0
                     dialogue(lab) 
-            if event.key == pygame.K_MINUS:
-                Tokidex()      
             if event.key == pygame.K_1:
                 starter = "Sickorita"
             if event.key == pygame.K_2:
@@ -493,11 +494,21 @@ while on:
                 enemy_name = enemy_mon["Tokimon"]
                 oppose = random.choice(base_stats[enemy_name]["movepool"]["Level 1"])
                 run_turn(player_mon, enemy_mon, chosen_move, oppose)
+        if event.type == pygame.KEYDOWN:      
+            if event.key == pygame.K_MINUS:
+                Tokidex()              
         if event.type == pygame.QUIT:
             on = False   
     keys = pygame.key.get_pressed()                                
     t.tick(60)
     game.fill((0, 0, 0))
+    if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True and steps >= 32:
+        encounter = random.randint(1, 5)
+        if encounter in [1, 2]:
+            Tokimon_battle("Boot Boot", "I")
+        elif encounter in [3, 4]:
+            Tokimon_battle("Tichu", "Me") 
+        steps -= 32    
     if inside_lab == True or outside == True or speech == lab:
         if not outside:
             if starter_picked == False:
@@ -510,22 +521,12 @@ while on:
         if keys[pygame.K_UP]:
             if mode == "Overworld":
                 player_y -= 10
-                if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True:
-                    encounter = random.randint(1, 5)
-                    if encounter in [1, 2]:
-                        Tokimon_battle("Boot Boot", "I")
-                    elif encounter in [3, 4]:
-                        Tokimon_battle("Tichu", "Me") 
+                steps += 10
             else: send_out()
         elif keys[pygame.K_DOWN]:
             if mode == "Overworld":
                 player_y += 10
-                if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True:
-                    encounter = random.randint(1, 5)
-                    if encounter in [1, 2]:
-                        Tokimon_battle("Boot Boot", "I")
-                    elif encounter in [3, 4]:
-                        Tokimon_battle("Tichu", "Me") 
+                steps += 10
         elif keys[pygame.K_LEFT]:
             if mode == "Overworld":
                 player_x -= 10
@@ -557,7 +558,6 @@ while on:
                 game.blit(rotated_broke, (x, y))
         else:
             game.blit(broke, (700, 100))
-    me = pygame.Rect((player_x, player_y, 128, 128))
     if me.colliderect(door) and inside_lab == True:
         draw_outside()
     if me.colliderect(peekaboo) and outside == True and found == False:
@@ -583,7 +583,7 @@ while on:
     if mode == "Battle":
         activer = team[team_slot]["Tokimon"]
         game.blit(player, (590, 330))
-        game.blit(images[enemy["Tokimon"]], (590, 210))
+        game.blit(images[enemy_team[enemy_slot]["Tokimon"]], (590, 210))
         game.blit(images[activer], (654, 330))
         draw_move_menu()
     write(speech[line])
