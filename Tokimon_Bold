@@ -12,6 +12,10 @@ team_slot = 0
 move_slot = 0
 enemy_slot = 0
 steps = 0
+potions = 0
+    ###Cordinates:
+potion = (random.randint(100, 580), random.randint(100, 658))
+potion_rect = pygame.Rect(potion[0],potion[1],32,32)
 ###------Start Game------###
 ine = 0
 pygame.init()
@@ -30,6 +34,7 @@ found = False
 inside_lab = False
 starter_picked = False
 inside_route = False
+found_potion = False
 ###------Dialogue------###
 intro = ["Tokimon in the ocean, surfers in the seas...",
 "Tokimon on the ground, unfortunate trainers on the floor...",
@@ -271,7 +276,9 @@ def use_attack(a, d, attack):
         if d in team:
             team_slot = 0
         elif d in enemy_team:
-            enemy_slot = 0    
+            enemy_slot = 0
+    a["HP"] = max(a["HP"], 0)
+    a["HP"] = min(a["HP"], base_stats[a["Tokimon"]]["HP"])            
     fainted = faintedornot(d) # type: ignore
     if fainted == True:
         mode = "Overworld"
@@ -477,10 +484,16 @@ while on:
                 starter = "Botodile"
             if event.key == pygame.K_4:
                 starter = "Tichu"
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_x:
+                if potions > 0:
+                    team[team_slot]["HP"] += 20
+                    team[team_slot]["HP"] = min(team[team_slot]["HP"], base_stats[team[team_slot]["Tokimon"]]["HP"])
+                    potions -= 1
+                    dialogue(["You restored 20 HP!"])        
         if event.type == pygame.KEYDOWN and mode == "Battle":
             active = team[team_slot]["Tokimon"]
             moves = base_stats[active]["movepool"]["Level 1"]
-
             if event.key == pygame.K_UP:
                 move_slot = (move_slot - 1) % len(moves)
 
@@ -509,6 +522,10 @@ while on:
         elif encounter in [3, 4]:
             Tokimon_battle("Tichu", "Me") 
         steps -= 32    
+    if me.colliderect(potion_rect) and inside_route == True and found_potion == False:
+        potions += 1
+        dialogue(["What's this?", "IT'S A POTION!"])
+        found_potion = True    
     if inside_lab == True or outside == True or speech == lab:
         if not outside:
             if starter_picked == False:
@@ -535,6 +552,8 @@ while on:
             if mode == "Overworld":
                 player_x += 10
             else: send_right()
+        player_x = max(0, min(player_x, 1152))
+        player_y = max(0, min(player_y, 572))    
         if event.type == pygame.QUIT:
             on = False           
     else:
