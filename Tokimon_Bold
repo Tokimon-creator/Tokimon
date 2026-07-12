@@ -330,12 +330,12 @@ def run_turn(a, d, move, enemy_move):
     dialogue(messages)    
 def send_left():
     global team_slot
-    if team_slot - 1 > 0:
+    if team_slot > 0:
         team_slot -= 1
 def send_right():
     global team_slot
-    if team_slot + 1 <= team_slot - 1:
-        team_slot += 1   
+    if team_slot + 1 < len(team):
+        team_slot += 1
 def send_out():
     global Tokimon, enemy_team, enemy
     if len(team) == 0:
@@ -550,21 +550,25 @@ while on:
             if mode == "Overworld":
                 player_y -= 10
                 steps += 10
-            else: send_out()
         elif keys[pygame.K_DOWN]:
             if mode == "Overworld":
                 player_y += 10
                 steps += 10
         elif keys[pygame.K_LEFT]:
             if mode == "Overworld":
-                player_x -= 10
-            else: send_left()  
+                player_x -= 10  
         elif keys[pygame.K_RIGHT]:
             if mode == "Overworld":
                 player_x += 10
-            else: send_right()
         player_x = max(0, min(player_x, 1152))
-        player_y = max(0, min(player_y, 572))    
+        player_y = max(0, min(player_y, 572))  
+        if event.type == pygame.KEYDOWN and mode == "Battle":    
+            if event.key == pygame.K_LEFT:  
+                send_left()
+            elif event.key == pygame.K_RIGHT:
+                send_right()
+            elif event.key == pygame.K_UP:
+                send_out()    
         if event.type == pygame.QUIT:
             on = False           
     else:
