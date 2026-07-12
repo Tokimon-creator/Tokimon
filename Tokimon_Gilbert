@@ -81,7 +81,7 @@ botodile = pygame.image.load("Botodile.png").convert_alpha()
 botodile = pygame.transform.scale(botodile, (128, 128))
 bootboot = pygame.image.load("Boot Boot.png").convert_alpha()
 bootboot = pygame.transform.scale(bootboot, (128, 128))
-pygame.display.set_caption("Tokimon: Bold")
+pygame.display.set_caption("Tokimon: Gilbert")
 ###------Dicts------###
 images = {"Tichu": tichu, "Botodile": botodile, "Sickorita": sickorita, "Dynaquill": dynaquill, "Boot Boot": bootboot}
 base_stats = {"Tichu": {"HP": 30, "Attack": 15, "Special Attack": 50, "Defense": 30, "Special Defense": 30, "Speed": 80, "Weight": 5, "Wild level": 1, "Type": "Electric", "Type2": "Placeholder","movepool": {"Level 1": ["Charm", "Shock"], "Level 7": ["Peek-a-boo"]}},
@@ -501,6 +501,7 @@ while on:
                         mode = "Overworld"
                     else:
                         dialogue([random.choice([f"OWWWW!!! yelled the {enemy_name}. Your Tokicube had used it's corner to hit the enemy.", f"NOPE! It failed!"])])    
+                    tokicubes -= 1    
         if event.type == pygame.KEYDOWN and mode == "Battle":
             active = team[team_slot]["Tokimon"]
             moves = base_stats[active]["movepool"]["Level 1"]
