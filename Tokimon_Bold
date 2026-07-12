@@ -17,6 +17,7 @@ tokicubes = 10
     ###Cordinates:
 potion = (random.randint(100, 580), random.randint(100, 658))
 potion_rect = pygame.Rect(potion[0],potion[1],32,32)
+top = pygame.Rect(0,0,1280,128)
 ###------Start Game------###
 ine = 0
 pygame.init()
@@ -36,6 +37,7 @@ inside_lab = False
 starter_picked = False
 inside_route = False
 found_potion = False
+inside_town = False
 ###------Dialogue------###
 intro = ["Tokimon in the ocean, surfers in the seas...",
 "Tokimon on the ground, unfortunate trainers on the floor...",
@@ -460,6 +462,58 @@ def draw_outside():
     else:
         inside_route = True
         pygame.draw.rect(game, (160, 82, 45), (590, 0, 200, 720))  # dirt path    
+def draw_town():
+    game.fill((105, 190, 105))  # town grass
+
+    # Main roads
+    pygame.draw.rect(game, (185, 150, 105), (540, 0, 200, 700))
+    pygame.draw.rect(game, (185, 150, 105), (0, 300, 1280, 140))
+
+    # Town square
+    pygame.draw.rect(game, (205, 180, 135), (440, 230, 400, 280))
+
+    # House on the left
+    pygame.draw.rect(game, (225, 210, 170), (100, 100, 260, 180))
+    pygame.draw.polygon(game, (150, 60, 50), [
+        (80, 100),
+        (230, 20),
+        (380, 100)
+    ])
+    pygame.draw.rect(game, (105, 60, 30), (205, 210, 50, 70))
+
+    # Tokimon healing center
+    pygame.draw.rect(game, (235, 235, 235), (900, 90, 280, 200))
+    pygame.draw.polygon(game, (210, 60, 70), [
+        (880, 90),
+        (1040, 10),
+        (1200, 90)
+    ])
+    pygame.draw.rect(game, (90, 150, 210), (1020, 220, 55, 70))
+
+    # Gym
+    pygame.draw.rect(game, (100, 110, 135), (80, 480, 330, 190))
+    pygame.draw.polygon(game, (60, 65, 90), [
+        (60, 480),
+        (245, 390),
+        (430, 480)
+    ])
+    pygame.draw.rect(game, (170, 120, 50), (215, 590, 60, 80))
+
+    # Sign
+    pygame.draw.rect(game, (90, 55, 25), (800, 500, 120, 70))
+    pygame.draw.rect(game, (90, 55, 25), (845, 570, 15, 60))
+
+    # Decorative trees
+    for tree_x, tree_y in [
+        (20, 30),
+        (400, 40),
+        (780, 50),
+        (1200, 420),
+        (1020, 500),
+        (460, 540)
+    ]:
+        pygame.draw.rect(game, (105, 65, 30), (tree_x + 22, tree_y + 40, 18, 35))
+        pygame.draw.circle(game, (35, 130, 55), (tree_x + 30, tree_y + 35), 35)        
 ###------Game Loop------###    
 while on:
     me = pygame.Rect((player_x, player_y, 128, 128))
@@ -526,6 +580,9 @@ while on:
     keys = pygame.key.get_pressed()                                
     t.tick(60)
     game.fill((0, 0, 0))
+    if me.colliderect(top) and inside_route == True:
+        inside_town = True
+        outside = False
     if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True and steps >= 32:
         encounter = random.randint(1, 5)
         if encounter in [1, 2]:
@@ -537,11 +594,16 @@ while on:
         potions += 1
         dialogue(["What's this?", "IT'S A POTION!"])
         found_potion = True    
-    if inside_lab == True or outside == True or speech == lab:
+    if inside_lab == True or outside == True or speech == lab or inside_town == True:
         if not outside:
             if starter_picked == False:
                 Tokimon = "" 
-            draw_lab()
+            if inside_town == True:
+                draw_town()
+                outside = False
+                inside_route = False
+            else:
+                draw_lab()
         else:
             draw_outside()   
         if mode != "Battle":     
@@ -570,7 +632,10 @@ while on:
             elif event.key == pygame.K_UP:
                 send_out()    
         if event.type == pygame.QUIT:
-            on = False           
+            on = False  
+    elif inside_town:
+        draw_town()
+        dialogue(["Welcome to this town!", "Don't blame us for forgetting the name of the town."])
     else:
         game.fill((80, 180, 255))
     if line == 0 and speech[line] == "Tokimon in the ocean, surfers in the seas...":
@@ -604,7 +669,7 @@ while on:
         game.blit(tichu, (600, 300))
         inside_lab = True
         outside = False
-        dialogue(starter_speech)            
+        dialogue(starter_speech)                
     elif(( 
     speech[line] == "3: Botodile!" or speech[line] == "Nice choice!") and 
     starter != "" and
