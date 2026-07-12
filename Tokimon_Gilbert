@@ -500,7 +500,7 @@ while on:
                         make_team(enemy_name)
                         mode = "Overworld"
                     else:
-                        dialogue(random.choice([f"OWWWW!!! yelled the {enemy_name}. Your Tokicube had used it's corner to hit the enemy.", f"NOPE! It failed!"]))    
+                        dialogue([random.choice([f"OWWWW!!! yelled the {enemy_name}. Your Tokicube had used it's corner to hit the enemy.", f"NOPE! It failed!"])])    
         if event.type == pygame.KEYDOWN and mode == "Battle":
             active = team[team_slot]["Tokimon"]
             moves = base_stats[active]["movepool"]["Level 1"]
