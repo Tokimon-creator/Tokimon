@@ -13,6 +13,7 @@ move_slot = 0
 enemy_slot = 0
 steps = 0
 potions = 0
+tokicubes = 10
     ###Cordinates:
 potion = (random.randint(100, 580), random.randint(100, 658))
 potion_rect = pygame.Rect(potion[0],potion[1],32,32)
@@ -460,7 +461,6 @@ def draw_outside():
         inside_route = True
         pygame.draw.rect(game, (160, 82, 45), (590, 0, 200, 720))  # dirt path    
 ###------Game Loop------###    
-    
 while on:
     me = pygame.Rect((player_x, player_y, 128, 128))
     door = pygame.Rect((560, 560, 80, 40))
@@ -491,6 +491,16 @@ while on:
                     team[team_slot]["HP"] = min(team[team_slot]["HP"], base_stats[team[team_slot]["Tokimon"]]["HP"])
                     potions -= 1
                     dialogue(["You restored 20 HP!"])        
+            if event.key == pygame.K_c:
+                enemy_name = enemy_team[enemy_slot]["Tokimon"]
+                if tokicubes > 0:
+                    catch_rate = (enemy_team[enemy_slot]["HP"])/base_stats[enemy_name]["HP"]        
+                    if random.randint(1, 100) > catch_rate * 100:
+                        dialogue([f"You caught a {enemy_name}!"])
+                        make_team(enemy_name)
+                        mode = "Overworld"
+                    else:
+                        dialogue(random.choice([f"OWWWW!!! yelled the {enemy_name}. Your Tokicube had used it's corner to hit the enemy.", f"NOPE! It failed!"]))    
         if event.type == pygame.KEYDOWN and mode == "Battle":
             active = team[team_slot]["Tokimon"]
             moves = base_stats[active]["movepool"]["Level 1"]
