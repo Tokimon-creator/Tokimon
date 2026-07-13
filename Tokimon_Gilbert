@@ -8,6 +8,7 @@ starter = ""
 mode = "Overworld"
 active_Tokimon = ""
 chosen_move = ""
+rival_starter = ""
 team_slot = 0
 move_slot = 0
 enemy_slot = 0
@@ -38,6 +39,8 @@ starter_picked = False
 inside_route = False
 found_potion = False
 inside_town = False
+trainer = False
+rival_encounter = False
 ###------Dialogue------###
 intro = ["Tokimon in the ocean, surfers in the seas...",
 "Tokimon on the ground, unfortunate trainers on the floor...",
@@ -88,7 +91,7 @@ pygame.display.set_caption("Tokimon: Gilbert")
 images = {"Tichu": tichu, "Botodile": botodile, "Sickorita": sickorita, "Dynaquill": dynaquill, "Boot Boot": bootboot}
 base_stats = {"Tichu": {"HP": 30, "Attack": 15, "Special Attack": 50, "Defense": 30, "Special Defense": 30, "Speed": 80, "Weight": 5, "Wild level": 1, "Type": "Electric", "Type2": "Placeholder","movepool": {"Level 1": ["Charm", "Shock"], "Level 7": ["Peek-a-boo"]}},
               "Sickorita": {"HP": 120, "Attack": 35, "Special Attack": 25, "Defense": 70, "Special Defense": 80, "Speed": 40, "Weight": 25, "Wild level": 5, "Type": "Grass", "Type2": "Fairy", "movepool": {"Level 1": ["Parting Stomp", "Leaf Attack"]},}, 
-              "Dynaquill": {"HP": 50, "Attack": 15, "Special Attack": 180, "Defense": 30, "Special Defense": 30, "Speed": 20, "Weight": 5, "Wild level": 5, "Type": "Fire", "Type2": "Placeholder", "movepool": {"Level 1": ["Flare", "Ember"]}},
+              "Dynaquill": {"HP": 50, "Attack": 15, "Special Attack": 180, "Defense": 30, "Special Defense": 30, "Speed": 40, "Weight": 5, "Wild level": 5, "Type": "Fire", "Type2": "Placeholder", "movepool": {"Level 1": ["Flare", "Ember"]}},
               "Botodile": {"HP": 15, "Attack": 80, "Special Attack": 50, "Defense": 30, "Special Defense": 30, "Speed": 120, "Weight": 10, "Wild level": 5, "Type": "Water", "Type2": "Dark", "movepool": {"Level 1": ["Water Leap", "Water Pistol"]}},
               "Boot Boot": {"HP": 5, "Attack": 108, "Special Attack": 20, "Defense": 67, "Special Defense": 41, "Speed": 7, "Weight": 11, "Wild level": 10, "Type": "Flying", "Type2": "Ghost", "movepool": {"Level 1": ["Boot Out", "Tackle", "Take Down"]}}}
 move_dict = {"Charm": {"Power": 0, "Effect": "Lowers attack", "Type": "Fairy", "PP": 15, "Attack": "Status", "Categories": [], "Priority": 0},
@@ -177,23 +180,23 @@ def trainer_VS(a, b, c, d, e, f):
         enemy_team.append({"Tokimon": b, "HP": base_stats[b]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[b]["Speed"], "PP": pp})
     if c != "":
         pp = {}
-    for move in base_stats[c]["movepool"]["Level 1"]:
-        pp[move] = move_dict[move]["PP"]
-    enemy_team.append({"Tokimon": c, "HP": base_stats[c]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[c]["Speed"], "PP": pp})
+        for move in base_stats[c]["movepool"]["Level 1"]:
+            pp[move] = move_dict[move]["PP"]
+        enemy_team.append({"Tokimon": c, "HP": base_stats[c]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[c]["Speed"], "PP": pp})
     if d != "":
         pp = {}
-    for move in base_stats[d]["movepool"]["Level 1"]:
-        pp[move] = move_dict[move]["PP"]
+        for move in base_stats[d]["movepool"]["Level 1"]:
+            pp[move] = move_dict[move]["PP"]
         enemy_team.append({"Tokimon": d, "HP": base_stats[d]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[d]["Speed"], "PP": pp})
     if e != "":
         pp = {}
-    for move in base_stats[e]["movepool"]["Level 1"]:
-        pp[move] = move_dict[move]["PP"]
+        for move in base_stats[e]["movepool"]["Level 1"]:
+            pp[move] = move_dict[move]["PP"]
         enemy_team.append({"Tokimon": e, "HP": base_stats[e]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[e]["Speed"], "PP": pp})
     if f != "":
         pp = {}
-    for move in base_stats[f]["movepool"]["Level 1"]:
-        pp[move] = move_dict[move]["PP"]
+        for move in base_stats[f]["movepool"]["Level 1"]:
+            pp[move] = move_dict[move]["PP"]
         enemy_team.append({"Tokimon": f, "HP": base_stats[f]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[f]["Speed"], "PP": pp})
 
 def draw_move_menu():
@@ -283,9 +286,64 @@ def use_attack(a, d, attack):
     a["HP"] = max(a["HP"], 0)
     a["HP"] = min(a["HP"], base_stats[a["Tokimon"]]["HP"])            
     fainted = faintedornot(d) # type: ignore
-    if fainted == True:
-        mode = "Overworld"
-        return [[f"{d_name} fainted!"], True, thing]
+    if fainted:
+    # Bold's Tokimon fainted
+        if d in enemy_team:
+            if enemy_slot < len(enemy_team) - 1:
+                enemy_slot += 1
+                next_enemy = enemy_team[enemy_slot]["Tokimon"]
+
+                return [
+                    [
+                        f"{d_name} fainted!",
+                        f"Bold sent out {next_enemy}!"
+                    ],
+                    True,
+                    thing
+                ]
+
+        # No enemy Tokimon remain
+            mode = "Overworld"
+            return [
+                [
+                    f"{d_name} fainted!",
+                    "You defeated Bold!"
+                ],
+                True,
+                thing
+            ]
+
+        # Your Tokimon fainted
+        elif d in team:
+            next_slot = team_slot + 1
+
+        # Skip any later Tokimon that have already fainted
+            while next_slot < len(team) and team[next_slot]["HP"] <= 0:
+                next_slot += 1
+
+            if next_slot < len(team):
+                team_slot = next_slot
+                next_player = team[team_slot]["Tokimon"]
+
+                return [
+                    [
+                    f"{d_name} fainted!",
+                    f"Go {next_player}!"
+                    ],
+                    True,
+                    thing
+                ]
+
+        # No player Tokimon remain
+            mode = "Overworld"
+            return [
+                [
+                    f"{d_name} fainted!",
+                    "You lost the battle!"
+                ],
+                True,
+                thing
+            ]
     else:
         return [[f"{a_name} used {attack}! It was {message}"], False, thing]
 def run_turn(a, d, move, enemy_move):
@@ -350,7 +408,7 @@ def send_out():
 def Tokimon_battle(enemy, player):
     global mode, Tokimon, enemy_slot
     mode = "Battle"
-    make_enemy(enemy)
+    make_enemy(enemy)   
     enemy_slot = 0
     enemy = enemy_team[enemy_slot]
     Tokimon = enemy["Tokimon"]    
@@ -359,8 +417,19 @@ def Tokimon_battle(enemy, player):
         if letters in ["A", "E", "I", "O", "U"] and stuff == 0:
             grammar = "an"
         elif stuff == 0:
-            grammar = "a"    
+            grammar = "a"
     dialogue([f"{player} encountered {grammar} {fp}!"])
+def start_trainer_battle(a, b="", c="", d="", e="", f=""):
+    global mode, trainer, enemy_slot, Tokimon
+    trainer = True
+    mode = "Trainer Battle"
+    trainer_VS(a, b, c, d, e, f)
+    enemy_slot = 0
+    Tokimon = enemy_team[enemy_slot]["Tokimon"]
+    dialogue([
+        f"The opponent challenged you to a battle!",
+        f"The opponent sent out {Tokimon}!"
+    ])    
 def Tokidex():
     global Tokimon
     if Tokimon == "Tichu":
@@ -454,7 +523,7 @@ def draw_outside():
     if found == False:
         Tokimon = "Tichu"
     game.fill((20, 220, 140))  # grass 
-    if mode != "Battle":
+    if mode not in ["Battle", "Trainer Battle"]:
         game.blit(player, (player_x, player_y))
     outside = True
     if found == False:
@@ -556,7 +625,7 @@ while on:
                     else:
                         dialogue([random.choice([f"OWWWW!!! yelled the {enemy_name}. Your Tokicube had used it's corner to hit the enemy.", f"NOPE! It failed!"])])    
                     tokicubes -= 1    
-        if event.type == pygame.KEYDOWN and mode == "Battle":
+        if event.type == pygame.KEYDOWN and mode in ["Battle", "Trainer Battle"]:
             active = team[team_slot]["Tokimon"]
             moves = base_stats[active]["movepool"]["Level 1"]
             if event.key == pygame.K_UP:
@@ -574,15 +643,37 @@ while on:
                 run_turn(player_mon, enemy_mon, chosen_move, oppose)
         if event.type == pygame.KEYDOWN:      
             if event.key == pygame.K_MINUS:
-                Tokidex()              
+                Tokidex()
+        if event.type == pygame.KEYDOWN and mode in ["Battle", "Trainer Battle"]:      
+            if event.key == pygame.K_LEFT:
+                send_left()
+                move_slot = 0
+            elif event.key == pygame.K_RIGHT:
+                send_right()
+                move_slot = 0                      
         if event.type == pygame.QUIT:
             on = False   
     keys = pygame.key.get_pressed()                                
     t.tick(60)
     game.fill((0, 0, 0))
-    if me.colliderect(top) and inside_route == True:
+    if me.colliderect(top) and inside_route and not inside_town:
         inside_town = True
+        inside_route = False
         outside = False
+
+        player_x = 576
+        player_y = 520
+
+        dialogue([
+        "Welcome to this town!",
+        "Don't blame us for forgetting the name of the town.",
+        "???: HEY YOU!",
+        "Player: Me?",
+        "Bold: YES YOU!",
+        "Player: So?",
+        "Bold: I challenge you to a Tokimon battle!",
+        "The sound studio gave up on the music."
+        ])
     if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True and steps >= 32:
         encounter = random.randint(1, 5)
         if encounter in [1, 2]:
@@ -602,11 +693,14 @@ while on:
                 draw_town()
                 outside = False
                 inside_route = False
+                if rival_encounter == False:
+                    start_trainer_battle("Tichu", "Boot Boot", rival_starter)
+                rival_encounter = True
             else:
                 draw_lab()
         else:
             draw_outside()   
-        if mode != "Battle":     
+        if mode not in ["Battle", "Trainer Battle"]:     
             game.blit(player, (player_x, player_y))
         if keys[pygame.K_UP]:
             if mode == "Overworld":
@@ -624,19 +718,9 @@ while on:
                 player_x += 10
         player_x = max(0, min(player_x, 1152))
         player_y = max(0, min(player_y, 572))  
-        if event.type == pygame.KEYDOWN and mode == "Battle":    
-            if event.key == pygame.K_LEFT:  
-                send_left()
-            elif event.key == pygame.K_RIGHT:
-                send_right()
-            elif event.key == pygame.K_UP:
-                send_out()    
-        if event.type == pygame.QUIT:
-            on = False  
-    elif inside_town:
-        draw_town()
-        dialogue(["Welcome to this town!", "Don't blame us for forgetting the name of the town."])
-    else:
+    if event.type == pygame.QUIT:
+        on = False 
+    if speech == intro or speech == trip:
         game.fill((80, 180, 255))
     if line == 0 and speech[line] == "Tokimon in the ocean, surfers in the seas...":
         pygame.draw.rect(game,  (0, 80, 220),  (0, 350, 1200, 370))      
@@ -664,7 +748,7 @@ while on:
         dialogue(["Peek-a-boo!"])
         found = True
         game.fill((20, 220, 140))  # grass
-        if mode != "Battle":
+        if mode not in ["Battle", "Trainer Battle"]:
             game.blit(player, (player_x, player_y))
         game.blit(tichu, (600, 300))
         inside_lab = True
@@ -678,8 +762,14 @@ while on:
         tokidex.append(starter)    
         Tokimon = starter
         make_team(starter)  
+        if starter == "Sickorita":
+            rival_starter = "Dynaquill"
+        elif starter == "Dynaquill":
+            rival_starter = "Botodile"
+        elif starter == "Botodile":
+            rival_starter = "Sickorita"
         dialogue(route_1_time)
-    if mode == "Battle":
+    if mode in ["Battle", "Trainer Battle"]:
         activer = team[team_slot]["Tokimon"]
         game.blit(player, (590, 330))
         game.blit(images[enemy_team[enemy_slot]["Tokimon"]], (590, 210))
