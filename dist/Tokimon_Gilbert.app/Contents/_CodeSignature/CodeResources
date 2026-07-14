@@ -4,13 +4,41 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Resources/Airplane.png</key>
+		<data>
+		polldudlMv62x6+e8rz12tJkwsc=
+		</data>
+		<key>Resources/Boot Boot.png</key>
+		<data>
+		s3azR5t6FxqxZsVsY3LXvWA7glE=
+		</data>
+		<key>Resources/Botodile.png</key>
+		<data>
+		ii5Qkexs53BfIq9EXDBzAahwD2U=
+		</data>
+		<key>Resources/Dynaquill.png</key>
+		<data>
+		cWyMWFZPt0sIqMRhW35kaJA1Ric=
+		</data>
+		<key>Resources/Sickorita.png</key>
+		<data>
+		xRgSmwGcp7+RXIMKdy6OP1NoBJU=
+		</data>
+		<key>Resources/Tichu.png</key>
+		<data>
+		5l3FU5B+CI1V80zNBrF9WvjEWaQ=
+		</data>
 		<key>Resources/base_library.zip</key>
 		<data>
-		GzaparPCf3jweppwE3UE37X2Nsw=
+		XFa/F/nkLTOGF3zO2HJm1ArLz/U=
 		</data>
 		<key>Resources/icon-windowed.icns</key>
 		<data>
 		eEHOuYpZLB0vKGVIWGZOh5rH8+o=
+		</data>
+		<key>Resources/player.png</key>
+		<data>
+		tDpvF7/ofmwfzuGFc2ghIdvZAAw=
 		</data>
 		<key>Resources/pygame/freesansbold.ttf</key>
 		<data>
@@ -23,6 +51,26 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Frameworks/Airplane.png</key>
+		<dict>
+			<key>symlink</key>
+			<string>../Resources/Airplane.png</string>
+		</dict>
+		<key>Frameworks/Boot Boot.png</key>
+		<dict>
+			<key>symlink</key>
+			<string>../Resources/Boot Boot.png</string>
+		</dict>
+		<key>Frameworks/Botodile.png</key>
+		<dict>
+			<key>symlink</key>
+			<string>../Resources/Botodile.png</string>
+		</dict>
+		<key>Frameworks/Dynaquill.png</key>
+		<dict>
+			<key>symlink</key>
+			<string>../Resources/Dynaquill.png</string>
+		</dict>
 		<key>Frameworks/Python</key>
 		<dict>
 			<key>symlink</key>
@@ -36,6 +84,16 @@
 			</data>
 			<key>requirement</key>
 			<string>cdhash H"7f0b67c907af63ed5681ef74fbaaaf21c45a715e"</string>
+		</dict>
+		<key>Frameworks/Sickorita.png</key>
+		<dict>
+			<key>symlink</key>
+			<string>../Resources/Sickorita.png</string>
+		</dict>
+		<key>Frameworks/Tichu.png</key>
+		<dict>
+			<key>symlink</key>
+			<string>../Resources/Tichu.png</string>
 		</dict>
 		<key>Frameworks/base_library.zip</key>
 		<dict>
@@ -203,6 +261,11 @@
 		<dict>
 			<key>symlink</key>
 			<string>pygame/.dylibs/libz.1.2.11.zlib-ng.dylib</string>
+		</dict>
+		<key>Frameworks/player.png</key>
+		<dict>
+			<key>symlink</key>
+			<string>../Resources/player.png</string>
 		</dict>
 		<key>Frameworks/pygame/.dylibs</key>
 		<dict>
@@ -1115,6 +1178,34 @@
 			<key>requirement</key>
 			<string>cdhash H"e7283a86cff1b56d3ee46495a9a1bb085670119c"</string>
 		</dict>
+		<key>Resources/Airplane.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0rY9hORCp6iA58MXWlAj5yLMuTv1LzNmaf289Cr/EsM=
+			</data>
+		</dict>
+		<key>Resources/Boot Boot.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			g1poN4e6A+OhOcdUnUw/SRIu4WF9Vifz0Ik4mAqLt8s=
+			</data>
+		</dict>
+		<key>Resources/Botodile.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8LIq35SnQbjJI2pr2WVf+QoPjgo/k8cP83YP2CfPBSA=
+			</data>
+		</dict>
+		<key>Resources/Dynaquill.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CAyluSSE4AvunQVHnHbzoAc4sPtC/1HhHBfpkBMvsBY=
+			</data>
+		</dict>
 		<key>Resources/Python</key>
 		<dict>
 			<key>symlink</key>
@@ -1125,11 +1216,25 @@
 			<key>symlink</key>
 			<string>../Frameworks/Python.framework</string>
 		</dict>
+		<key>Resources/Sickorita.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cyftAL5EzFk6UXCJbDHZUfdTZobkkcjrKGS3LJD/D7g=
+			</data>
+		</dict>
+		<key>Resources/Tichu.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yIyHUibla7HED58wc47dIY+gebYOijhYitkdhvpdAkc=
+			</data>
+		</dict>
 		<key>Resources/base_library.zip</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			BUP5JF9ZH3SyV0pvi1H93pg04SPVV4ZTyGXKKROTxBc=
+			4JjLhWLVwR/yr/auSKnh7JFi5OcruK5Jl3zleW/U1XA=
 			</data>
 		</dict>
 		<key>Resources/icon-windowed.icns</key>
@@ -1288,6 +1393,13 @@
 		<dict>
 			<key>symlink</key>
 			<string>pygame/.dylibs/libz.1.2.11.zlib-ng.dylib</string>
+		</dict>
+		<key>Resources/player.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hytueV3IJ3K7v+RDpMT29H7Q/Lcn4/Q8dy++sf5gFE0=
+			</data>
 		</dict>
 		<key>Resources/pygame/.dylibs</key>
 		<dict>
