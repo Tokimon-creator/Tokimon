@@ -5,7 +5,7 @@ import random
 ###------Varibles------###
 Tokimon = ""
 starter = ""
-mode = "Overworld"
+mode = "Title Screen"
 active_Tokimon = ""
 chosen_move = ""
 rival_starter = ""
@@ -42,7 +42,7 @@ inside_town = False
 trainer = False
 rival_encounter = False
 ###------Dialogue------###
-intro = ["Tokimon in the ocean, surfers in the seas...",
+intro = ["Press A to start","Tokimon in the ocean, surfers in the seas...",
 "Tokimon on the ground, unfortunate trainers on the floor...",
 "Tokimon in the air, one VERY unlucky trainer on an airplane."]
 trip = ["Hello everyone! Welcome to Zapsols Airlines!", 
@@ -722,11 +722,11 @@ while on:
         on = False 
     if speech == intro or speech == trip:
         game.fill((80, 180, 255))
-    if line == 0 and speech[line] == "Tokimon in the ocean, surfers in the seas...":
-        pygame.draw.rect(game,  (0, 80, 220),  (0, 350, 1200, 370))      
-    elif line == 1 and speech[line] == "Tokimon on the ground, unfortunate trainers on the floor...":
+    if line == 1 and speech[line] == "Tokimon in the ocean, surfers in the seas...":
+        pygame.draw.rect(game,  (0, 80, 220),  (0, 350, 1200, 370))     
+    elif line == 2 and speech[line] == "Tokimon on the ground, unfortunate trainers on the floor...":
         pygame.draw.rect(game,  (170, 150, 150),  (0, 350, 1200, 370))  
-    elif line == 2 and speech[line] == "Tokimon in the air, one VERY unlucky trainer on an airplane.":
+    elif line == 3 and speech[line] == "Tokimon in the air, one VERY unlucky trainer on an airplane.":
         game.blit(broke, (700, 100))          
     if speech == trip:
         if line >= 5:
@@ -741,6 +741,8 @@ while on:
                 game.blit(rotated_broke, (x, y))
         else:
             game.blit(broke, (700, 100))
+    if speech[line] != "Press A to start" and mode not in ["Battle", "Trainer Battle"]:
+        mode = "Overworld"
     if me.colliderect(door) and inside_lab == True:
         draw_outside()
     if me.colliderect(peekaboo) and outside == True and found == False:
@@ -775,5 +777,10 @@ while on:
         game.blit(images[enemy_team[enemy_slot]["Tokimon"]], (590, 210))
         game.blit(images[activer], (654, 330))
         draw_move_menu()
+    if mode == "Title Screen":
+        game.fill((0, 0, 255))
+        font = pygame.font.SysFont("Courier", 36)
+        text = font.render("Tokimon: Bold", False, (0, 255, 0))
+        game.blit(text, (450, 100))  
     write(speech[line])
     pygame.display.flip()    
