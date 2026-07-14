@@ -145,6 +145,13 @@ matchup = {
     "Placeholder": {"Weaknesses": ["The Developer When He Gets Ideas"], "Resistences": ["The Obvious"]}
 }
 ###------Functions------###
+def gain_exp(player, enemy):
+    added_exp = int(enemy["Level"] * 1000/player["Level"])
+    player["EXP"] += added_exp
+    while player["EXP"] >= 1000:
+        player["EXP"] -= 1000
+        player["Level"] += 1
+    return [f"{player['Tokimon']} gained {added_exp} EXP! It is now at level {player['Level']}!"]
 def faintedornot(Tokimon):
     return Tokimon["HP"] == 0
 def type_check(d, move):
@@ -160,54 +167,46 @@ def type_check(d, move):
         effect *= 2
     elif move_type in matchup[second_type]["Resistences"]:
         effect *= 0.5
-    return effect            
+    return effect        
+def make_pp(name):
+    pp = {}
+
+    for move_list in base_stats[name]["movepool"].values():
+        for move in move_list:
+            pp[move] = move_dict[move]["PP"]
+
+    return pp    
 def make_team(a):
     global team
-    pp = {}
-    for move in base_stats[a]["movepool"]["Level 1"]:
-        pp[move] = move_dict[move]["PP"]
-    team.append({"Tokimon": a, "HP": base_stats[a]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[a]["Speed"], "PP": pp})
+    pp = make_pp(a)
+    team.append({"Tokimon": a, "HP": base_stats[a]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[a]["Speed"], "PP": pp, "Level": base_stats[a]["Wild level"], "EXP": 0})
 
 def make_enemy(a):
     global enemy_team
-    pp = {}
-    for move in base_stats[a]["movepool"]["Level 1"]:
-        pp[move] = move_dict[move]["PP"]
-    enemy_team = [{"Tokimon": a, "HP": base_stats[a]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[a]["Speed"], "PP": pp}]   
+    pp = make_pp(a)
+    enemy_team = [{"Tokimon": a, "HP": base_stats[a]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[a]["Speed"], "PP": pp, "Level": base_stats[a]["Wild level"], "EXP": 0}]   
 
 def trainer_VS(a, b, c, d, e, f):
     global enemy_team
     enemy_team = []
     if a != "":
-        pp = {}
-    for move in base_stats[a]["movepool"]["Level 1"]:
-        pp[move] = move_dict[move]["PP"]
-    enemy_team.append({"Tokimon": a, "HP": base_stats[a]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[a]["Speed"], "PP": pp})
+        pp = make_pp(a)
+        enemy_team.append({"Tokimon": a, "HP": base_stats[a]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[a]["Speed"], "PP": pp, "Level": base_stats[a]["Wild level"], "EXP": 0})
     if b != "":
-        pp = {}
-        for move in base_stats[b]["movepool"]["Level 1"]:
-            pp[move] = move_dict[move]["PP"]    
-        enemy_team.append({"Tokimon": b, "HP": base_stats[b]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[b]["Speed"], "PP": pp})
-    if c != "":
-        pp = {}
-        for move in base_stats[c]["movepool"]["Level 1"]:
-            pp[move] = move_dict[move]["PP"]
-        enemy_team.append({"Tokimon": c, "HP": base_stats[c]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[c]["Speed"], "PP": pp})
-    if d != "":
-        pp = {}
-        for move in base_stats[d]["movepool"]["Level 1"]:
-            pp[move] = move_dict[move]["PP"]
-        enemy_team.append({"Tokimon": d, "HP": base_stats[d]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[d]["Speed"], "PP": pp})
-    if e != "":
-        pp = {}
-        for move in base_stats[e]["movepool"]["Level 1"]:
-            pp[move] = move_dict[move]["PP"]
-        enemy_team.append({"Tokimon": e, "HP": base_stats[e]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[e]["Speed"], "PP": pp})
-    if f != "":
-        pp = {}
-        for move in base_stats[f]["movepool"]["Level 1"]:
-            pp[move] = move_dict[move]["PP"]
-        enemy_team.append({"Tokimon": f, "HP": base_stats[f]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[f]["Speed"], "PP": pp})
+        pp = make_pp(b)
+        enemy_team.append({"Tokimon": b, "HP": base_stats[b]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[b]["Speed"], "PP": pp, "Level": base_stats[b]["Wild level"], "EXP": 0})
+    if c !="":
+        pp = make_pp(c)
+        enemy_team.append({"Tokimon": c, "HP": base_stats[c]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[c]["Speed"], "PP": pp, "Level": base_stats[c]["Wild level"], "EXP": 0})
+    if d !="":
+        pp = make_pp(d)
+        enemy_team.append({"Tokimon": d, "HP": base_stats[d]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[d]["Speed"], "PP": pp, "Level": base_stats[d]["Wild level"], "EXP": 0})
+    if e !="":
+        pp = make_pp(e)
+        enemy_team.append({"Tokimon": e, "HP": base_stats[e]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[e]["Speed"], "PP": pp, "Level": base_stats[e]["Wild level"], "EXP": 0})
+    if f !="":
+        pp = make_pp(f)
+        enemy_team.append({"Tokimon": f, "HP": base_stats[f]["HP"], "Attack Stage": 0, "Defense Stage": 0, "Speed Stage": 0, "Special Attack Stage": 0, "Special Defense Stage": 0, "Status": "", "Current Speed": base_stats[f]["Speed"], "PP": pp, "Level": base_stats[f]["Wild level"], "EXP": 0})
 
 def draw_move_menu():
     global move_slot
@@ -217,7 +216,11 @@ def draw_move_menu():
     pygame.draw.rect(game, (255, 255, 255), (0, 500, 1280, 200), 4)
 
     active = team[team_slot]["Tokimon"]
-    moves = base_stats[active]["movepool"]["Level 1"]
+    moves = []
+    for key in base_stats[active]["movepool"]:
+        required_level = int(key.split()[1])
+        if required_level <= team[team_slot]["Level"]:
+            moves.extend(base_stats[active]["movepool"][key])
 
     for i, move in enumerate(moves):
         if i == move_slot:
@@ -302,7 +305,7 @@ def use_attack(a, d, attack):
             if enemy_slot < len(enemy_team) - 1:
                 enemy_slot += 1
                 next_enemy = enemy_team[enemy_slot]["Tokimon"]
-
+                gain_exp(a, d)
                 return [
                     [
                         f"{d_name} fainted!",
@@ -637,7 +640,11 @@ while on:
                     tokicubes -= 1    
         if event.type == pygame.KEYDOWN and mode in ["Battle", "Trainer Battle"]:
             active = team[team_slot]["Tokimon"]
-            moves = base_stats[active]["movepool"]["Level 1"]
+            moves = []
+            for key in base_stats[active]["movepool"]:
+                required_level = int(key.split()[1])
+                if required_level <= team[team_slot]["Level"]:
+                    moves.extend(base_stats[active]["movepool"][key])
             if event.key == pygame.K_UP:
                 move_slot = (move_slot - 1) % len(moves)
 
@@ -789,8 +796,8 @@ while on:
         draw_move_menu()
     if mode == "Title Screen":
         game.fill((255, 160, 0))
-        font = pygame.font.SysFont("Courier", 36)
+        font = pygame.font.SysFont("Courier", 64)
         text = font.render("Tokimon: Bold", False, (255, 0, 0))
-        game.blit(text, (450, 100))  
+        game.blit(text, (300, 100))  
     write(speech[line])
     pygame.display.flip()    
