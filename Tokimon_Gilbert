@@ -146,7 +146,7 @@ matchup = {
 }
 ###------Functions------###
 def gain_exp(player, enemy):
-    added_exp = enemy["Level"] * 1000/player["Level"]
+    added_exp = int(enemy["Level"] * 1000/player["Level"])
     player["EXP"] += added_exp
     while player["EXP"] >= 1000:
         player["EXP"] -= 1000
@@ -233,7 +233,6 @@ def use_attack(a, d, attack):
     global mode, team_slot, enemy_slot
     a_name = a["Tokimon"]
     d_name = d["Tokimon"]
-
     if a["PP"][attack] == 0:
         return [[f"{a_name} tried to use {attack}!", False, ["But it failed!"]]]
 
@@ -371,15 +370,19 @@ def run_turn(a, d, move, enemy_move):
         attack = move
         faster = a    
     else:    
-        if base_stats[a_name]["Speed"] > base_stats[d_name]["Speed"]:
+        if a["Current Speed"] * stage_multiplier[a["Speed Stage"]] > d["Current Speed"] * stage_multiplier[d["Speed Stage"]]:
             attack = move  
             faster = a  
-        elif base_stats[a_name]["Speed"] < base_stats[d_name]["Speed"]:
+        elif a["Current Speed"] * stage_multiplier[a["Speed Stage"]] < d["Current Speed"] * stage_multiplier[d["Speed Stage"]]:
             attack = enemy_move
             faster = d
         else:
-            attack = random.choice([enemy_move, move]) 
-            faster = random.choice([a, d]) 
+            if random.choice([True, False]):
+                attack = move
+                faster = a
+            else:
+                attack = enemy_move
+                faster = d
     if faster == a:
         slower = d
     else:
