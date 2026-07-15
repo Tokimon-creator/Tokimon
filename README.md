@@ -1,7 +1,9 @@
 # Tokimon
 Welcome to the wonderfully absurd world of **Tokimon**!
+It is an comedy adventure RPG indie game!
 # Code
-Avalible in Python/Pygame and .app(.exe not supported)
+Download as **ZIP**
+Avalible in **Python/Pygame** and **.app(.exe not supported)**
 # Current Features
 Collect creatures at Route 1!
 Battle battles with creatures you're trying to catch!
