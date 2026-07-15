@@ -790,6 +790,8 @@ while on:
             rival_starter = "Botodile"
         elif starter == "Botodile":
             rival_starter = "Sickorita"
+        else:
+            rival_starter = "Botodile"
         dialogue(route_1_time)
     if mode in ["Battle", "Trainer Battle"]:
         activer = team[team_slot]["Tokimon"]
