@@ -51,6 +51,7 @@ found_potion = False
 inside_town = False
 trainer = False
 rival_encounter = False
+dialogued = False
 ###------Dialogue------###
 intro = ["Press A to start","Tokimon in the ocean, surfers in the seas...",
 "Tokimon on the ground, unfortunate trainers on the floor...",
@@ -361,8 +362,6 @@ def use_attack(a, d, attack):
 def run_turn(a, d, move, enemy_move):
     # Also a and d are TEAMS not Tokimon, bit of a letdown really
     messages = []
-    a_name = a["Tokimon"]
-    d_name = d["Tokimon"]    
     if move_dict[enemy_move]["Priority"] > move_dict[move]["Priority"]:
         attack = enemy_move
         faster = d
@@ -676,24 +675,25 @@ while on:
     keys = pygame.key.get_pressed()                                
     t.tick(60)
     game.fill((0, 0, 0))
-    if me.colliderect(top) and inside_route and not inside_town:
-        inside_town = True
-        inside_route = False
-        outside = False
-
-        player_x = 576
-        player_y = 520
-
-        dialogue([
-        "Welcome to this town!",
-        "Don't blame us for forgetting the name of the town.",
-        "???: HEY YOU!",
-        "Player: Me?",
-        "Bold: YES YOU!",
-        "Player: So?",
-        "Bold: I challenge you to a Tokimon battle!",
-        "The sound studio gave up on the music."
-        ])
+    if me.colliderect(top):
+        if inside_route:
+            inside_town = True
+            inside_route = False
+            outside = False
+            player_x = 576
+            player_y = 520
+            if not dialogued:
+                dialogue([
+                "Welcome to this town!",
+                "Don't blame us for forgetting the name of the town.",
+                "???: HEY YOU!",
+                "Player: Me?",
+                "Bold: YES YOU!",
+                "Player: So?",
+                "Bold: I challenge you to a Tokimon battle!",
+                "The sound studio gave up on the music."
+            ])
+            dialogued = True    
     if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True and steps >= 32:
         encounter = random.randint(1, 5)
         if encounter in [1, 2]:
@@ -713,9 +713,9 @@ while on:
                 draw_town()
                 outside = False
                 inside_route = False
-                if rival_encounter == False:
+                if rival_encounter == False and speech[line] == "The sound studio gave up on the music.":
                     start_trainer_battle("Tichu", "Boot Boot", rival_starter)
-                rival_encounter = True
+                    rival_encounter = True
             else:
                 draw_lab()
         else:
