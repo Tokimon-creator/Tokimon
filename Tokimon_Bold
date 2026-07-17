@@ -1,4 +1,3 @@
-# Ho-ho was here
 ###------Modules------###
 from pathlib import Path
 import sys
@@ -115,7 +114,7 @@ base_stats = {"Tichu": {"HP": 30, "Attack": 15, "Special Attack": 50, "Defense":
               "Farfledged": {"HP": 70, "Attack": 90, "Special Attack": 50, "Defense": 50, "Special Defense": 50, "Speed": 150, "Weight": 15, "Wild level": 12, "Type": "Flying", "Type2": "Fighting", "movepool": {"Level 1": ["Close Combat", "Brutal Swing"], "Level 10": ["Slash", "Leaf Blade"]}}}
 move_dict = {"Charm": {"Power": 0, "Effect": "Lowers attack", "Type": "Fairy", "PP": 15, "Attack": "Status", "Categories": [], "Priority": 0},
             "Shock": {"Power": 30, "Effect": "Chance of paralyzation", "Type": "Electric", "PP": 15, "Attack": "Special", "Categories": [], "Priority": 0},
-            "Peek-a-boo": {"Power": 50, "Effect": "Invulnerble on the charging turn", "Type": "Dark", "PP": 15, "Attack": "Physical", "Categories": ["Charging"], "Priority": +2},
+            "Peek-a-boo": {"Power": 50, "Effect": "Invulnerable on the charging turn", "Type": "Dark", "PP": 15, "Attack": "Physical", "Categories": ["Charging"], "Priority": +2},
             "Parting Stomp": {"Power": 0, "Effect": "Lowers attack", "Type": "Dragon", "PP": 15, "Attack": "Status", "Categories": [], "Priority": 0},
             "Leaf Attack": {"Power": 40, "Effect": "", "Type": "Grass", "PP": 15, "Attack": "Special", "Categories": [], "Priority": 0},
             "Flare": {"Power": 0, "Effect": "Lowers Defense", "Type": "Fire", "PP": 15, "Attack": "Status", "Categories": [], "Priority": 0},
@@ -138,9 +137,7 @@ move_dict = {"Charm": {"Power": 0, "Effect": "Lowers attack", "Type": "Fairy", "
             "Dragon Tail": {"Power": 60, "Effect": "Forces the opponent to switch out.", "Type": "Dragon", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": -6},
             "Slash": {"Power": 70, "Effect": "", "Type": "Normal", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": 0},
             "Brutal Swing": {"Power": 90, "Effect": "Hits all adjacent opponents", "Type": "Dark", "PP": 10, "Attack": "Physical", "Categories": [], "Priority": +3},
-            "Explosion": {"Power": 250, "Effect": "Explodes everything", "Type": "Normal", "PP": 5, "Attack": "Physical", "Categories": [], "Priority": -3},
-            "Present": {"Power": 0, "Effect": "Present", "Type": "Normal", "PP": 15, "Attack": "Status", "Categories": [], "Priority": 0}
-}            
+}     
 stage_multiplier = {
     -6: 0.25,
     -5: 0.29,
@@ -257,30 +254,25 @@ def draw_move_menu():
 
         game.blit(text, (50, 520 + i * 35))    
 def use_attack(a, d, attack):
-    global mode, team_slot, enemy_slot, charging_move, charger, charged
+    global mode, team_slot, enemy_slot, charged
+    charged = False
     a_name = a["Tokimon"]
     d_name = d["Tokimon"]
-    if move_dict[attack]["Effect"] == "Explodes everything":
-        a["HP"] = 0
-    if move_dict[attack]["Effect"] == "Present":
-        if random.randint(1, 4) == 1:
-            d["HP"] += 50
-        else:
-            dialogue(["Ho-ho was here!"])
-            a["HP"] = 0
-            d['HP'] = 0
-            hohohohahahaheeheehe!
-            sys.exit()    
+    if a["Status"].removeprefix("Charging ").removeprefix("Invulnerable ") in move_dict:
+        attack = a["Status"].removeprefix("Charging ").removeprefix("Invulnerable ")    
+        charged = True
+        a["Status"] = ""
     if a["Status"] == "Confused":
         if random.randint(1, 3) == 1:
             a["HP"] -= (base_stats[a["Tokimon"]]["Attack"] * 20)/base_stats[a["Tokimon"]]["Defense"]
-            return [f"{a_name} got confused and hurt itself!", faintedornot(a), ""]
+            a["HP"] = max(0, a["HP"])
+            return [[f"{a_name} got confused and hurt itself!"], faintedornot(a), ""]
     if a["PP"][attack] == 0:
-        return [[f"{a_name} tried to use {attack}!", False, ["But it failed!"]]]
+        return [[f"{a_name} tried to use {attack}!"], False, ["But it failed!"]]
 
     if random.randint(1, 4) == 1 and a["Status"] == "Paralyzed":
         return [[f"{a_name} was fully paralyzed!"], False, [f"{a_name} was unable to attack!"]]
-    if d["Status"] == "Invulnerable":
+    if d["Status"].startswith("Invulnerable"):
         return [[f"{d_name} is invulnerable!"], False, [f"{a_name} couldn't hit {d_name}!"]]
     category = move_dict[attack]["Attack"]
     power = move_dict[attack]["Power"]
@@ -299,6 +291,17 @@ def use_attack(a, d, attack):
     else:
         attack_stat = "Attack"
         defense_stat = "Defense"
+    if a["Status"] == "Destructive":
+        power = 150
+        category = "Physical"
+        attack_stat = "Attack"
+        defense_stat = "Defense"
+    if a["Status"] == "Tormented":
+        power = 100
+        category = "Physical"
+        attack_stat = "Attack"
+        defense_stat = "Defense"
+
     if category != "Status":
         damage = int((power * base_stats[a_name][attack_stat] / base_stats[d_name][defense_stat]) * a_stage/d_stage)
         damage = max(0, damage)
@@ -319,6 +322,10 @@ def use_attack(a, d, attack):
         message = "something that should not be dialogue at this point."            
     d["HP"] = max(0, d["HP"] - damage)
     thing = [""]
+    if move_dict[attack]["Effect"] == "Gives user Destructive status":
+        a["Status"] = "Destructive"
+    if move_dict[attack]["Effect"] == "Gives opponent Tormented status":
+        d["Status"] = "Tormented"
     if move_dict[attack]["Effect"] == "Lowers attack":
         d["Attack Stage"] -= 1
         thing = [f"{d_name}'s attack was lowered!"]
@@ -330,7 +337,7 @@ def use_attack(a, d, attack):
             d["Status"] = "Paralyzed"   
             d["Current Speed"] *= 1/2 
             thing = [f"{d_name} was paralyzed by {attack}!"]
-    elif move_dict[attack]["Effect"] == "Recoil":
+    elif move_dict[attack]["Effect"] == "Recoil" or a["Status"] == "Destructive":
         a["HP"] -= damage/3 
         thing = [f"{a_name} took recoil!"]       
     elif move_dict[attack]["Effect"] == "Forces the opponent to switch out.":
@@ -343,17 +350,17 @@ def use_attack(a, d, attack):
         thing = [f"{a_name}'s attack was raised sharply!"]
     elif move_dict[attack]["Effect"] == "Gives user Destructive status":
         a["Status"] = "Destructive"
-        rampage = 3
     if "Charging" in move_dict[attack]["Categories"] and not charged:
-        charging_move = attack
-        charger = a["Tokimon"]
-        charged = False
         if move_dict[attack]["Effect"] in ["Invulnerable on the charging turn", "Invulnerable on the charging turn"]:
-            a["Status"] = "Invulnerable"
-        return [f"{a_name} is charging {attack}!", False, thing]   
+            a["Status"] = "Invulnerable " + attack
+        else:
+            a["Status"] = "Charging " + attack
+        return [[f"{a_name} is charging {attack}!"], False, thing]
+       
     a["HP"] = max(a["HP"], 0)
     a["HP"] = min(a["HP"], base_stats[a["Tokimon"]]["HP"])            
     fainted = faintedornot(d) # type: ignore
+    charged = False
     if fainted:
     # Gilbert's Tokimon fainted
         if d in enemy_team:
