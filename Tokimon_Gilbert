@@ -1,8 +1,6 @@
 ###------Modules------###
 from pathlib import Path
 import sys
-
-
 def resource_path(filename):
     if getattr(sys, "frozen", False):
         base_path = Path(sys._MEIPASS)
@@ -52,6 +50,8 @@ inside_town = False
 trainer = False
 rival_encounter = False
 dialogued = False
+inside_route2 = False
+ohko = False
 ###------Dialogue------###
 intro = ["Press A to start","Tokimon in the ocean, surfers in the seas...",
 "Tokimon on the ground, unfortunate trainers on the floor...",
@@ -104,7 +104,11 @@ base_stats = {"Tichu": {"HP": 30, "Attack": 15, "Special Attack": 50, "Defense":
               "Sickorita": {"HP": 120, "Attack": 35, "Special Attack": 25, "Defense": 70, "Special Defense": 80, "Speed": 40, "Weight": 25, "Wild level": 5, "Type": "Grass", "Type2": "Fairy", "movepool": {"Level 1": ["Parting Stomp", "Leaf Attack"]},}, 
               "Dynaquill": {"HP": 50, "Attack": 15, "Special Attack": 180, "Defense": 30, "Special Defense": 30, "Speed": 40, "Weight": 5, "Wild level": 5, "Type": "Fire", "Type2": "Placeholder", "movepool": {"Level 1": ["Flare", "Ember"]}},
               "Botodile": {"HP": 15, "Attack": 80, "Special Attack": 50, "Defense": 30, "Special Defense": 30, "Speed": 120, "Weight": 10, "Wild level": 5, "Type": "Water", "Type2": "Dark", "movepool": {"Level 1": ["Water Leap", "Water Pistol"]}},
-              "Boot Boot": {"HP": 5, "Attack": 108, "Special Attack": 20, "Defense": 67, "Special Defense": 41, "Speed": 7, "Weight": 11, "Wild level": 10, "Type": "Flying", "Type2": "Ghost", "movepool": {"Level 1": ["Boot Out", "Tackle", "Take Down"]}}}
+              "Boot Boot": {"HP": 5, "Attack": 108, "Special Attack": 20, "Defense": 67, "Special Defense": 41, "Speed": 7, "Weight": 11, "Wild level": 10, "Type": "Flying", "Type2": "Ghost", "movepool": {"Level 1": ["Boot Out", "Tackle", "Take Down"]}},
+              "Duglett": {"HP": 1, "Attack": 150, "Special Attack": 0, "Defense": 100, "Special Defense": 5, "Speed": 150, "Weight": 10, "Wild level": 12, "Type": "Ground", "Type2": "Dark", "movepool": {"Level 1": ["Dig", "Thoughts of Chaos"], "Level 10": ["Earthquake", "Destructive Rage"]}},
+              "Digtrio": {"HP": 1, "Attack": 200, "Special Attack": 0, "Defense": 150, "Special Defense": 5, "Speed": 200, "Weight": 30, "Wild level": 15, "Type": "Ground", "Type2": "Dark", "movepool": {"Level 1": ["Dig", "Thoughts of Chaos", "Earthquake", "Destructive Rage"], "Level 12": ["Torment", "Encore"]}},
+              "Skale": {"HP": 15, "Attack": 50, "Special Attack": 150, "Defense": 30, "Special Defense": 70, "Speed": 5, "Weight": 5, "Wild level": 12, "Type": "Grass", "Type2": "Dragon", "movepool": {"Level 1": ["Dragon Pulse", "Leaf Storm"], "Level 10": ["Dragon Tail", "Dragon Breath"]}},
+              "Farfledged": {"HP": 70, "Attack": 90, "Special Attack": 50, "Defense": 50, "Special Defense": 50, "Speed": 150, "Weight": 15, "Wild level": 12, "Type": "Flying", "Type2": "Fighting", "movepool": {"Level 1": ["Close Combat", "Brutal Swing"], "Level 10": ["Slash", "Leaf Blade"]}}}
 move_dict = {"Charm": {"Power": 0, "Effect": "Lowers attack", "Type": "Fairy", "PP": 15, "Attack": "Status", "Categories": [], "Priority": 0},
             "Shock": {"Power": 30, "Effect": "Chance of paralyzation", "Type": "Electric", "PP": 15, "Attack": "Special", "Categories": [], "Priority": 0},
             "Peek-a-boo": {"Power": 50, "Effect": "Invulnerble on the charging turn", "Type": "Dark", "PP": 15, "Attack": "Physical", "Categories": ["Charging"], "Priority": +2},
@@ -116,7 +120,20 @@ move_dict = {"Charm": {"Power": 0, "Effect": "Lowers attack", "Type": "Fairy", "
             "Water Pistol": {"Power": 40, "Effect": "", "Type": "Water", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": +2},
             "Boot Out": {"Power": 20, "Effect": "Forces the opponent to switch out.", "Type": "Ghost", "PP": 5, "Attack": "Physical", "Categories": ["Kicking"], "Priority": +4},
             "Tackle": {"Power": 40, "Effect": "", "Type": "Normal", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": 0},
-            "Take Down": {"Power": 90, "Effect": "Recoil", "Type": "Flying", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": +2}}
+            "Take Down": {"Power": 90, "Effect": "Recoil", "Type": "Flying", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": +2},
+            "Dig": {"Power": 80, "Effect": "Semi-invulnerable on the charging turn", "Type": "Ground", "PP": 15, "Attack": "Physical", "Categories": ["Charging"], "Priority": 0},
+            "Thoughts of Chaos": {"Power": 0, "Effect": "Heightens the user's attack sharply", "Type": "Dark", "PP": 5, "Attack": "Status", "Categories": [], "Priority": +3},
+            "Earthquake": {"Power": 100, "Effect": "Hits all adjacent opponents", "Type": "Ground", "PP": 10, "Attack": "Physical", "Categories": [], "Priority": 0},
+            "Destructive Rage": {"Power": 0, "Effect": "Gives user Destructive status", "Type": "Dragon", "PP": 5, "Attack": "Physical", "Categories": [], "Priority": +6},
+            "Torment": {"Power": 0, "Effect": "Gives opponent Tormented status", "Type": "Dark", "PP": 5, "Attack": "Status", "Categories": [], "Priority": +6},
+            "Leaf Storm": {"Power": 130, "Effect": "Lowers user's Special Attack sharply", "Type": "Grass", "PP": 5, "Attack": "Special", "Categories": [], "Priority": 0},
+            "Dragon Pulse": {"Power": 85, "Effect": "", "Type": "Dragon", "PP": 10, "Attack": "Special", "Categories": ["Pulse"], "Priority": 0},
+            "Dragon Breath": {"Power": 30, "Effect": "Chance of paralyzation", "Type": "Dragon", "PP": 15, "Attack": "Special", "Categories": [], "Priority": -3},
+            "Leaf Blade": {"Power": 60, "Effect": "", "Type": "Grass", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": 0},
+            "Close Combat": {"Power": 120, "Effect": "Lowers user's Defense and Special Defense sharply", "Type": "Fighting", "PP": 10, "Attack": "Physical", "Categories": [], "Priority": +2},
+            "Dragon Tail": {"Power": 60, "Effect": "Forces the opponent to switch out.", "Type": "Dragon", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": -6},
+            "Slash": {"Power": 70, "Effect": "", "Type": "Normal", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": 0},
+            "Brutal Swing": {"Power": 90, "Effect": "Hits all adjacent opponents", "Type": "Dark", "PP": 10, "Attack": "Physical", "Categories": [], "Priority": +3}}
 stage_multiplier = {
     -6: 0.25,
     -5: 0.29,
@@ -138,11 +155,13 @@ matchup = {
     "Water": {"Weaknesses": ["Electric", "Grass", "Flying"], "Resistences": ["Fire"]},
     "Grass": {"Weaknesses": ["Fire", "Flying"], "Resistences": ["Electric", "Fairy"]},
     "Fairy": {"Weaknesses": ["Fire", "Flying"], "Resistences": ["Dark", "Dragon"]},
-    "Dark": {"Weaknesses": ["Fire", "Fairy"], "Resistences": ["Electric"]},
+    "Dark": {"Weaknesses": ["Fire", "Fairy", "Fighting"], "Resistences": ["Electric"]},
     "Dragon": {"Weaknesses": ["Fairy"], "Resistences": ["Fire", "Grass", "Water"]},
     "Ghost": {"Weaknesses": ["Fire", "Fairy", "Water", "Ghost"], "Resistences": ["Dark", "Dragon"]},
-    "Flying": {"Weaknesses": ["Water", "Dragon", "Electric"], "Resistences": ["Dark", "Fairy", "Grass", "Fire"]},
+    "Flying": {"Weaknesses": ["Water", "Dragon", "Electric"], "Resistences": ["Dark", "Fairy", "Grass", "Fire", "Ground"]},
     "Normal": {"Weaknesses": ["Fighting"], "Resistences": ["Psychic"]},
+    "Fighting": {"Weaknesses": ["Flying", "Psychic"], "Resistences": ["Normal", "Dark"]},
+    "Ground": {"Weaknesses": ["Water", "Grass", "Ice"], "Resistences": ["Electric", "Flying"]},
     "Placeholder": {"Weaknesses": ["The Developer When He Gets Ideas"], "Resistences": ["The Obvious"]}
 }
 ###------Functions------###
@@ -473,6 +492,18 @@ def Tokidex():
         dialogue(["No. 12: It now has the speed of a speedboat. It now is able to catch the Tokimon directly if needed."])     
     elif Tokimon == "Boot Boot":
         dialogue(["No. 13: It wears boots. Nobody knows whats in it's nest, maybe more boots? Other believe there are eggs, those are the researchers who chose Bulbasaur in their Pokemon playthrough. By the way Pokemon Winds and Waves are coming in 2027! Pre-order today.", "*We aren't affiliated, sponsored or endorsed by Pokemon International or Nintendo**.", "**This lines are only added for comedic effect."])    
+    elif Tokimon == "Buckahoo":
+        dialogue(["No. 14: It's a cowboy owl thingie."])
+    elif Tokimon == "Curly Fowl":
+        dialogue(["No. 15: It roams the Wild West and is a bit of a... bird."])
+    elif Tokimon == "Duglett":
+        dialogue(["No. 16: DESTROY DESTROY it is commanded by it's evolution Digtrio to...", "DESTROY DESTROY!"])            
+    elif Tokimon == "Digtrio":
+        dialogue(["No. 17: It wrecks roads and buildings aggressively. It is known as the... aggressive roads and buildings wrecker."])    
+    elif Tokimon == "Farfledged":
+        dialogue(["No. 18: It carries a Skale and uses it in combat."])
+    elif Tokimon == "Skale":
+        dialogue(["It looks like 2 celery sticks glued together with kale leaf scales and a dragon head attached."])        
     else:
         dialogue(["No. ???: ???"])    
     if Tokimon not in tokidex and Tokimon != "" and Tokimon != "Undiscovered":
@@ -543,9 +574,12 @@ def draw_outside():
     outside = True
     if found == False:
         game.blit(tichu, (600, 300))
-    else:
+    elif not inside_route2:
         inside_route = True
         pygame.draw.rect(game, (160, 82, 45), (590, 0, 200, 720))  # dirt path    
+    else:
+        pygame.draw.rect(game, (0, 0, 0), (590, 0, 200, 240))
+        pygame.draw.rect(game, (0, 0, 0), (590, 0, 200, 430))
 def draw_town():
     game.fill((105, 190, 105))  # town grass
 
@@ -693,7 +727,17 @@ while on:
                 "Bold: I challenge you to a Tokimon battle!",
                 "The sound studio gave up on the music."
             ])
-            dialogued = True    
+            dialogued = True 
+        elif inside_town:
+            inside_route2 = True
+            inside_town = False
+            draw_outside()
+            dialogue(["Route 2 we go-", 
+                      "Wha-?", "Construction Worker Jim: Get out! This Route is a road now", 
+                      "Player: I don't see the road.", 
+                      "Bob: \"Well some Duglett and Digtrio keep messing up our concrete!\"", "Jim: Yeah you might get hurt!", 
+                      "Player: Pfff I bet my Tokimon could OHKO them.",
+                      "Bob: REALLY? Well prove it time for a battle!"])       
     if me.colliderect(peekaboo) and found == True and starter_picked == True and inside_route == True and steps >= 32:
         encounter = random.randint(1, 5)
         if encounter in [1, 2]:
@@ -720,6 +764,9 @@ while on:
                 draw_lab()
         else:
             draw_outside()   
+            if ohko == False and inside_route2 and line == 5:
+                ohko = True
+                start_trainer_battle("Skale", "Farfledged", "Duglett")    
         if mode not in ["Battle", "Trainer Battle"]:     
             game.blit(player, (player_x, player_y))
         if keys[pygame.K_UP]:
@@ -796,7 +843,7 @@ while on:
     if mode in ["Battle", "Trainer Battle"]:
         activer = team[team_slot]["Tokimon"]
         game.blit(player, (590, 330))
-        game.blit(images[enemy_team[enemy_slot]["Tokimon"]], (590, 210))
+        # game.blit(images[enemy_team[enemy_slot]["Tokimon"]], (590, 210))
         game.blit(images[activer], (654, 330))
         draw_move_menu()
     if mode == "Title Screen":
