@@ -269,6 +269,7 @@ def use_attack(a, d, attack):
             dialogue(["Ho-ho was here!"])
             a["HP"] = 0
             d['HP'] = 0
+            hohohohahahaheeheehe!
             sys.exit()    
     if a["Status"] == "Confused":
         if random.randint(1, 3) == 1:
