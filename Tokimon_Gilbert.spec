@@ -5,7 +5,7 @@ a = Analysis(
     ['Tokimon_Gilbert'],
     pathex=[],
     binaries=[],
-    datas=[('Airplane.png', '.'), ('player.png', '.'), ('Tichu.png', '.'), ('Sickorita.png', '.'), ('Dynaquill.png', '.'), ('Botodile.png', '.'), ('Boot Boot.png', '.')],
+    datas=[('Airplane.png', '.'), ('player.png', '.'), ('Tichu.png', '.'), ('Sickorita.png', '.'), ('Dynaquill.png', '.'), ('Botodile.png', '.'), ('Boot Boot.png', '.'), ('Skale.png', '.'), ('Farfledged.png', '.'), ('Duglett.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
