@@ -100,9 +100,15 @@ botodile = pygame.image.load(resource_path("Botodile.png")).convert_alpha()
 botodile = pygame.transform.scale(botodile, (128, 128))
 bootboot = pygame.image.load(resource_path("Boot Boot.png")).convert_alpha()
 bootboot = pygame.transform.scale(bootboot, (128, 128))
+skale = pygame.image.load(resource_path("Skale.png")).convert_alpha()
+skale = pygame.transform.scale(skale, (128, 128))
+farfledged = pygame.image.load(resource_path("Farfledged.png")).convert_alpha()
+farfledged = pygame.transform.scale(farfledged, (128, 128))
+duglett = pygame.image.load(resource_path("Duglett.png")).convert_alpha()
+duglett = pygame.transform.scale(duglett, (128, 128))
 pygame.display.set_caption("Tokimon: Bold")
 ###------Dicts------###
-images = {"Tichu": tichu, "Botodile": botodile, "Sickorita": sickorita, "Dynaquill": dynaquill, "Boot Boot": bootboot}
+images = {"Tichu": tichu, "Botodile": botodile, "Sickorita": sickorita, "Dynaquill": dynaquill, "Boot Boot": bootboot, "Skale": skale, "Farfledged": farfledged, "Duglett": duglett}
 base_stats = {"Tichu": {"HP": 30, "Attack": 15, "Special Attack": 50, "Defense": 30, "Special Defense": 30, "Speed": 80, "Weight": 5, "Wild level": 1, "Type": "Electric", "Type2": "Placeholder","movepool": {"Level 1": ["Charm", "Shock"], "Level 7": ["Peek-a-boo"]}},
               "Sickorita": {"HP": 120, "Attack": 35, "Special Attack": 25, "Defense": 70, "Special Defense": 80, "Speed": 40, "Weight": 25, "Wild level": 5, "Type": "Grass", "Type2": "Fairy", "movepool": {"Level 1": ["Parting Stomp", "Leaf Attack"]},}, 
               "Dynaquill": {"HP": 50, "Attack": 15, "Special Attack": 180, "Defense": 30, "Special Defense": 30, "Speed": 40, "Weight": 5, "Wild level": 5, "Type": "Fire", "Type2": "Placeholder", "movepool": {"Level 1": ["Flare", "Ember"]}},
@@ -913,7 +919,7 @@ while on:
     if mode in ["Battle", "Trainer Battle"]:
         activer = team[team_slot]["Tokimon"]
         game.blit(player, (590, 330))
-        # game.blit(images[enemy_team[enemy_slot]["Tokimon"]], (590, 210))
+        game.blit(images[enemy_team[enemy_slot]["Tokimon"]], (590, 210))
         game.blit(images[activer], (654, 330))
         draw_move_menu()
     if mode == "Title Screen":

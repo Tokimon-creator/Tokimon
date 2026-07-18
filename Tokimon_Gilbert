@@ -100,6 +100,12 @@ botodile = pygame.image.load(resource_path("Botodile.png")).convert_alpha()
 botodile = pygame.transform.scale(botodile, (128, 128))
 bootboot = pygame.image.load(resource_path("Boot Boot.png")).convert_alpha()
 bootboot = pygame.transform.scale(bootboot, (128, 128))
+skale = pygame.image.load(resource_path("Skale.png")).convert_alpha()
+skale = pygame.transform.scale(skale, (128, 128))
+farfledged = pygame.image.load(resource_path("Farfledged.png")).convert_alpha()
+farfledged = pygame.transform.scale(farfledged, (128, 128))
+duglett = pygame.image.load(resource_path("Duglett.png")).convert_alpha()
+duglett = pygame.transform.scale(duglett, (128, 128))
 pygame.display.set_caption("Tokimon: Gilbert")
 ###------Dicts------###
 images = {"Tichu": tichu, "Botodile": botodile, "Sickorita": sickorita, "Dynaquill": dynaquill, "Boot Boot": bootboot}
