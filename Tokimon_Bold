@@ -129,11 +129,11 @@ move_dict = {"Charm": {"Power": 0, "Effect": "Lowers attack", "Type": "Fairy", "
             "Earthquake": {"Power": 100, "Effect": "Hits all adjacent opponents", "Type": "Ground", "PP": 10, "Attack": "Physical", "Categories": [], "Priority": 0},
             "Destructive Rage": {"Power": 0, "Effect": "Gives user Destructive status", "Type": "Dragon", "PP": 5, "Attack": "Physical", "Categories": [], "Priority": +6},
             "Torment": {"Power": 0, "Effect": "Gives opponent Tormented status", "Type": "Dark", "PP": 5, "Attack": "Status", "Categories": [], "Priority": +6},
-            "Leaf Storm": {"Power": 130, "Effect": "Lowers user's Special Attack sharply", "Type": "Grass", "PP": 5, "Attack": "Special", "Categories": [], "Priority": 0},
+            "Leaf Storm": {"Power": 130, "Effect": "Lowers user's Special Attack harshly", "Type": "Grass", "PP": 5, "Attack": "Special", "Categories": [], "Priority": 0},
             "Dragon Pulse": {"Power": 85, "Effect": "", "Type": "Dragon", "PP": 10, "Attack": "Special", "Categories": ["Pulse"], "Priority": 0},
-            "Dragon Breath": {"Power": 30, "Effect": "Chance of paralyzation", "Type": "Dragon", "PP": 15, "Attack": "Special", "Categories": [], "Priority": -3},
+            "Dragon Breath": {"Power": 30, "Effect": "FULL Chance of paralyzation", "Type": "Dragon", "PP": 15, "Attack": "Special", "Categories": [], "Priority": -3},
             "Leaf Blade": {"Power": 60, "Effect": "", "Type": "Grass", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": 0},
-            "Close Combat": {"Power": 120, "Effect": "Lowers user's Defense and Special Defense sharply", "Type": "Fighting", "PP": 10, "Attack": "Physical", "Categories": [], "Priority": +2},
+            "Close Combat": {"Power": 120, "Effect": "Lowers user's Defense and Special Defense harshly", "Type": "Fighting", "PP": 10, "Attack": "Physical", "Categories": [], "Priority": +2},
             "Dragon Tail": {"Power": 60, "Effect": "Forces the opponent to switch out.", "Type": "Dragon", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": -6},
             "Slash": {"Power": 70, "Effect": "", "Type": "Normal", "PP": 15, "Attack": "Physical", "Categories": [], "Priority": 0},
             "Brutal Swing": {"Power": 90, "Effect": "Hits all adjacent opponents", "Type": "Dark", "PP": 10, "Attack": "Physical", "Categories": [], "Priority": +3},
@@ -169,6 +169,11 @@ matchup = {
     "Placeholder": {"Weaknesses": ["The Developer When He Gets Ideas"], "Resistences": ["The Obvious"]}
 }
 ###------Functions------###
+def first_living_slot(party, current_slot):
+    for i, tokimon in enumerate(party):
+        if i != current_slot and tokimon["HP"] > 0:
+            return i
+    return None
 def gain_exp(player, enemy):
     added_exp = int(enemy["Level"] * 1000/player["Level"])
     player["EXP"] += added_exp
@@ -262,6 +267,12 @@ def use_attack(a, d, attack):
         attack = a["Status"].removeprefix("Charging ").removeprefix("Invulnerable ")    
         charged = True
         a["Status"] = ""
+    if "Charging" in move_dict[attack]["Categories"] and not charged:
+        if move_dict[attack]["Effect"] in ["Invulnerable on the charging turn", "Invulnerable on the charging turn"]:
+            a["Status"] = "Invulnerable " + attack
+        else:
+            a["Status"] = "Charging " + attack      
+        return [[f"{a_name} is charging {attack}!"], False, [""]]      
     if a["Status"] == "Confused":
         if random.randint(1, 3) == 1:
             a["HP"] -= (base_stats[a["Tokimon"]]["Attack"] * 20)/base_stats[a["Tokimon"]]["Defense"]
@@ -337,26 +348,41 @@ def use_attack(a, d, attack):
             d["Status"] = "Paralyzed"   
             d["Current Speed"] *= 1/2 
             thing = [f"{d_name} was paralyzed by {attack}!"]
+    elif move_dict[attack]["Effect"] == "FULL Chance of paralyzation":
+        d["Status"] = "Paralyzed"
+        d["Current Speed"] *= 1/2
+        thing = [f"{d_name} was paralyzed by {attack}!"]
     elif move_dict[attack]["Effect"] == "Recoil" or a["Status"] == "Destructive":
         a["HP"] -= damage/3 
         thing = [f"{a_name} took recoil!"]       
     elif move_dict[attack]["Effect"] == "Forces the opponent to switch out.":
-        if d in team:
-            team_slot = 0
-        elif d in enemy_team:
-            enemy_slot = 0
+        new_slot = first_living_slot(team, team_slot)
+        if new_slot is not None:
+            team_slot = new_slot
+        
     elif move_dict[attack]["Effect"] == "Heightens the user's attack sharply":
         a["Attack Stage"] += 2
         thing = [f"{a_name}'s attack was raised sharply!"]
     elif move_dict[attack]["Effect"] == "Gives user Destructive status":
         a["Status"] = "Destructive"
-    if "Charging" in move_dict[attack]["Categories"] and not charged:
-        if move_dict[attack]["Effect"] in ["Invulnerable on the charging turn", "Invulnerable on the charging turn"]:
-            a["Status"] = "Invulnerable " + attack
-        else:
-            a["Status"] = "Charging " + attack
-        return [[f"{a_name} is charging {attack}!"], False, thing]
-       
+    elif move_dict[attack]["Effect"] == "Lowers user's Special Attack harshly":
+        a["Special Attack Stage"] -= 2
+        thing = [f"{a_name}'s special attack was lowered harshly!"]
+    elif move_dict[attack]["Effect"] == "Lowers user's Defense and Special Defense harshly":
+        a["Defense Stage"] -= 2
+        a["Special Defense Stage"] -= 2
+        thing = [f"{a_name}'s defense and special defense were lowered harshly!"]
+    a["Attack Stage"] = min(max(a["Attack Stage"], -6), 6)
+    a["Defense Stage"] = min(max(a["Defense Stage"], -6), 6)
+    a["Speed Stage"] = min(max(a["Speed Stage"], -6), 6)
+    a["Special Attack Stage"] = min(max(a["Special Attack Stage"], -6), 6)
+    a["Special Defense Stage"] = min(max(a["Special Defense Stage"], -6), 6)
+    d["Attack Stage"] = min(max(d["Attack Stage"], -6), 6)
+    d["Defense Stage"] = min(max(d["Defense Stage"], -6), 6)
+    d["Speed Stage"] = min(max(d["Speed Stage"], -6), 6)
+    d["Special Attack Stage"] = min(max(d["Special Attack Stage"], -6), 6)
+    d["Special Defense Stage"] = min(max(d["Special Defense Stage"], -6), 6)
+
     a["HP"] = max(a["HP"], 0)
     a["HP"] = min(a["HP"], base_stats[a["Tokimon"]]["HP"])            
     fainted = faintedornot(d) # type: ignore
@@ -621,6 +647,7 @@ def draw_outside():
         inside_route = True
         pygame.draw.rect(game, (160, 82, 45), (590, 0, 200, 720))  # dirt path    
     else:
+        game.fill((160, 100, 45))  
         pygame.draw.rect(game, (0, 0, 0), (590, 0, 200, 240))
         pygame.draw.rect(game, (0, 0, 0), (590, 0, 200, 430))
 def draw_town():
@@ -807,7 +834,7 @@ while on:
                 draw_lab()
         else:
             draw_outside()   
-            if ohko == False and inside_route2 and line == 5:
+            if ohko == False and speech[line] == "Bob: REALLY? Well prove it time for a battle!":
                 ohko = True
                 start_trainer_battle("Skale", "Farfledged", "Duglett")    
         if mode not in ["Battle", "Trainer Battle"]:     
